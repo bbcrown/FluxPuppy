@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FluxPuppy.iml" filepath="$PROJECT_DIR$/FluxPuppy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LI840AInterface.iml" filepath="$PROJECT_DIR$/LI840AInterface.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

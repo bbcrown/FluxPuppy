@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Flux Puppy</string>
+    <string name="app_name">CO2 Flux</string>
     <string name="meta_data">Meta Data</string>
     <string name="finish">Finish</string>
     <string name="date">Date:</string>

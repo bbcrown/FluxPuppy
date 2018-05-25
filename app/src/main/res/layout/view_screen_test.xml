@@ -193,36 +193,36 @@
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
-                android:background="@android:drawable/btn_default"
                 android:onClick="showCO2"
-                android:text="CO2" />
+                android:text="CO2"
+                android:background = "@android:drawable/btn_default"/>
 
             <Button
                 android:id="@+id/h2obutton"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
-                android:background="@android:drawable/btn_default"
                 android:onClick="showH2O"
-                android:text="H20" />
+                android:text="H20"
+                android:background = "@android:drawable/btn_default"/>
 
             <Button
                 android:id="@+id/tempbutton"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
-                android:background="@android:drawable/btn_default"
                 android:onClick="showTemp"
-                android:text="Temp" />
+                android:text="Temp"
+                android:background = "@android:drawable/btn_default"/>
 
             <Button
                 android:id="@+id/presbutton"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
-                android:background="@android:drawable/btn_default"
                 android:onClick="showPres"
-                android:text="Pressure" />
+                android:text="Pressure"
+                android:background = "@android:drawable/btn_default"/>
 
         </LinearLayout>
 
@@ -239,37 +239,37 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:background="@android:drawable/btn_default"
             android:onClick="goToFileDirectory"
-            android:text="Exit" />
+            android:text="Exit"
+            android:background = "@android:drawable/btn_default"/>
 
         <Button
             android:id="@+id/saveAndFileDirectoryButton"
+            android:enabled="false"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:background="@android:drawable/btn_default"
-            android:enabled="false"
             android:onClick="saveAndGoToFileDirectory"
-            android:text="Save Subgraph and Exit" />
+            android:text="Save Subgraph and Exit"
+            android:background = "@android:drawable/btn_default"/>
 
         <Button
             android:id="@+id/splitButton"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:background="@android:drawable/btn_default"
             android:onClick="applySubgraph"
-            android:text="Apply Subgraph" />
+            android:text="Apply Subgraph"
+            android:background = "@android:drawable/btn_default"/>
 
         <EditText
             android:id="@+id/splitText"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
+            android:singleLine="true"
             android:digits="1234567890,-."
-            android:hint="Start,end"
-            android:singleLine="true" />
+            android:hint="Start,end"/>
 
     </LinearLayout>
 

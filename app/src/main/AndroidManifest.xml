@@ -25,7 +25,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:screenOrientation="sensorPortrait">
+        android:screenOrientation="portrait">
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -44,25 +44,23 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name= ".metaData"
-                android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="sensorPortrait" >
+                android:windowSoftInputMode="stateHidden">
+
         </activity>
-        <activity android:name= ".graphScreen"
-            android:screenOrientation="sensorPortrait" >
+        <activity android:name= ".graphScreen">
+
 
         </activity>
         <activity android:name= ".viewScreen"
-            android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustPan|stateHidden">
 
 
         </activity>
         <activity android:name= ".fileDirectory"
-            android:windowSoftInputMode="adjustPan|stateHidden"
-            android:screenOrientation="sensorPortrait">
+            android:windowSoftInputMode="adjustPan|stateHidden">
+
 
         </activity>
 

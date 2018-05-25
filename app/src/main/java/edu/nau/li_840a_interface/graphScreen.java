@@ -466,7 +466,7 @@ public class graphScreen extends AppCompatActivity {
                     if (usbService != null)
                     {
                         String initMessage;
-                        initMessage = "<CFG><OUTRATE>0.5</OUTRATE></CFG>\n";
+                        initMessage = "<LI840><CFG><OUTRATE>0.5</OUTRATE></CFG></LI840>\n";
                         usbService.write(initMessage.getBytes());
                     }
                     break;

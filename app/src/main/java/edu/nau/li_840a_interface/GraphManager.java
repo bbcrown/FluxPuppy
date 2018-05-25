@@ -409,7 +409,7 @@ public class GraphManager implements Runnable
             }
             catch(Exception exception)
             {
-                output[1] = (float) -999;
+                output[1] = (float) 0.0;
             }
 
             // Try to parse out the temperature
