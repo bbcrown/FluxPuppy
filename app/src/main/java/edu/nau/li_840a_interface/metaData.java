@@ -390,7 +390,7 @@ public class metaData extends AppCompatActivity {
 
 
         } else {
-            Toast.makeText(metaData.this, "Please take a Portrait Picture", Toast.LENGTH_LONG).show();
+            Toast.makeText(metaData.this, "Please change the orientation and take a new photo!", Toast.LENGTH_LONG).show();
         }
 
 
