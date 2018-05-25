@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.nau.li_840a_interface.viewScreen"
+    android:orientation="vertical"
+    android:layout_marginLeft="16dip"
+    android:layout_marginRight="16dip">
+
+    <!-- File name -->
+    <TextView
+        android:id="@+id/tv_FileName"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.05"
+        android:text="TextView"
+        android:textAlignment="center" />
+
+    <!-- Metadata -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.35"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_SiteName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_OpName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_SampleID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_Temp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_TimeDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_long"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_lat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_elev"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:text="TextView" />
+
+            <EditText
+                android:id="@+id/et_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-.#_=+/@'():;!?$ "
+                android:hint="Edit comments"
+                android:maxLength = "250"
+                android:inputType="textCapWords"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/metaDataImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Graphs -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.35"
+        android:orientation="vertical">
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph2"
+            android:layout_width="match_parent"
+            android:layout_height="0dip" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph3"
+            android:layout_width="match_parent"
+            android:layout_height="0dip" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph4"
+            android:layout_width="match_parent"
+            android:layout_height="0dip" />
+
+    </LinearLayout>
+
+    <!-- Stats -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.05"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/slope"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.40"
+            android:gravity="center_vertical"
+            android:text="Slope: " />
+
+        <TextView
+            android:id="@+id/rsquared"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.30"
+            android:gravity="fill_vertical"
+            android:text="R-squared: " />
+
+        <TextView
+            android:id="@+id/standarderror"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.30"
+            android:gravity="center_vertical"
+            android:text="Standard error: " />
+
+    </LinearLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="0.2"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/co2button"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
+                android:onClick="showCO2"
+                android:text="CO2" />
+
+            <Button
+                android:id="@+id/h2obutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
+                android:onClick="showH2O"
+                android:text="H20" />
+
+            <Button
+                android:id="@+id/tempbutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
+                android:onClick="showTemp"
+                android:text="Temp" />
+
+            <Button
+                android:id="@+id/presbutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
+                android:onClick="showPres"
+                android:text="Pressure" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/fileDirectoryButton"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:background="@android:drawable/btn_default"
+            android:onClick="goToFileDirectory"
+            android:text="Exit" />
+
+        <Button
+            android:id="@+id/saveAndFileDirectoryButton"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:background="@android:drawable/btn_default"
+            android:enabled="false"
+            android:onClick="saveAndGoToFileDirectory"
+            android:text="Save Subgraph and Exit" />
+
+        <Button
+            android:id="@+id/splitButton"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:background="@android:drawable/btn_default"
+            android:onClick="applySubgraph"
+            android:text="Apply Subgraph" />
+
+        <EditText
+            android:id="@+id/splitText"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:digits="1234567890,-."
+            android:hint="Start,end"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.nau.li_840a_interface.graphScreen"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.7"
+        android:orientation="vertical">
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph2"
+            android:layout_width="match_parent"
+            android:layout_height="0dip" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph3"
+            android:layout_width="match_parent"
+            android:layout_height="0dip" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph4"
+            android:layout_width="match_parent"
+            android:layout_height="0dip" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.3"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="0.2"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/co2display"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:gravity="bottom"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/h2odisplay"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:gravity="bottom"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tempdisplay"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:gravity="bottom"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/presdisplay"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:gravity="bottom"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="0.4"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/co2button"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="showCO2"
+                android:text="CO2"
+                android:background = "@android:drawable/btn_default"/>
+
+            <Button
+                android:id="@+id/h2obutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="showH2O"
+                android:text="H20"
+                android:background = "@android:drawable/btn_default"/>
+
+            <Button
+                android:id="@+id/tempbutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="showTemp"
+                android:text="Temp"
+                android:background = "@android:drawable/btn_default"/>
+
+            <Button
+                android:id="@+id/presbutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="showPres"
+                android:text="Pressure"
+                android:background = "@android:drawable/btn_default"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="0.4"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/backbutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="goToMetadata"
+                android:text="Back"
+                android:background = "@android:drawable/btn_default"/>
+
+            <Button
+                android:id="@+id/zooombutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="zoomToggle"
+                android:text="Enable Zoom"
+                android:background = "@android:drawable/btn_default"/>
+
+            <Button
+                android:id="@+id/logbutton"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="startStopLog"
+                android:text="Start Logging"
+                android:background = "@android:drawable/btn_default"/>
+
+            <Button
+                android:id="@+id/finalbutton"
+                android:enabled="false"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="0.25"
+                android:onClick="finalize"
+                android:text="Save and Exit"
+                android:background = "@android:drawable/btn_default"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
