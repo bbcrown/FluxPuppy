@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
@@ -46,13 +47,19 @@ public class graphScreen extends AppCompatActivity {
     private Thread manager_thread;
     private SerialReader reader;
 
+    public static int NOT_CONNECTED = 0;  // Where?
+    public static int USB = 1;  // Where?
+    public static int BLUETOOTH = 2;  // Where?
+    public static int device_connection=NOT_CONNECTED; // Is a Sensor connected?
+    public static boolean bt_established=false;
+    public static int SELECT_BT_DEVICE = 1;  // Intent_response id
+
     /*
      *  Constructor for the graph screen. Fetches the screen IDs for the graphs and text boxes, and
      *  passes them off to the GraphManager to be updated at a rate of once per second.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         // Initializes the display
         super.onCreate(savedInstanceState);
         setContentView(R.layout.graph_screen);
@@ -82,13 +89,27 @@ public class graphScreen extends AppCompatActivity {
         graphIds[3] = findViewById(R.id.graph4);
 
         // Get the screen IDs for each of the four text views
-        textIds = new TextView[4];
+        textIds = new TextView[7];
         textIds[0] = findViewById(R.id.co2display);
         textIds[1] = findViewById(R.id.h2odisplay);
         textIds[2] = findViewById(R.id.tempdisplay);
         textIds[3] = findViewById(R.id.presdisplay);
 
-        // Initialize the handler. This is used for the USB serial communication
+        textIds[4] = findViewById(R.id.sitedisplay);
+        textIds[5] = findViewById(R.id.sampledisplay);
+        textIds[6] = findViewById(R.id.devicedisplay);
+
+        Intent intent = getIntent();
+        Bundle bd = intent.getExtras();
+        if(bd != null)
+        {
+            String getName = (String) bd.get("SITE_NAME");
+            textIds[4].setText(getName);
+            getName = (String) bd.get("SAMPLE_ID");
+            textIds[5].setText(getName);
+        }
+
+        // Initialize the handler. This is used for the USB/BT serial communication
         mHandler = new graphScreen.MyHandler(this);
 
         // Initialize a new serial reader object, for reading in information from the instrument
@@ -100,8 +121,99 @@ public class graphScreen extends AppCompatActivity {
         manager_thread = new Thread(manager);
         manager_thread.start();
 
+        if (device_connection==NOT_CONNECTED) connectDevice();// We need user input to find the sensors on USB or BLUETOOTH (just once)
+        final Button button = findViewById(R.id.connectbutton);
+        if (device_connection>NOT_CONNECTED) button.setText("Disconnect");
     }
 
+    /*
+     *  Runs when the "Connect/Disconnect" button is pressed
+     */
+    public void connectDeviceToggle(View view)
+    {
+        final Button button = findViewById(R.id.connectbutton);
+        if (device_connection>NOT_CONNECTED){
+            // DISCONNECT EVERYTHING
+            if (device_connection==BLUETOOTH){
+                btService.BTdisconnect();
+                BTService.address ="no_address";
+                stopService(new Intent(this, BTService.class));
+                btService = null;
+            }
+            if (device_connection==BLUETOOTH){
+                stopService(new Intent(this, UsbService.class));
+                usbService = null;
+            }
+            unregisterReceiver(sensorReceiver);
+            unbindService(sensorConnection);
+            button.setText("Connect");
+            device_connection=NOT_CONNECTED;
+            bt_established=false;
+        }
+        else{
+            connectDevice();
+            if (device_connection>NOT_CONNECTED) button.setText("Disconnect");
+        }
+    }
+
+    public void connectDevice() {
+        // Let's find out some properties of the Android device...
+        // for now let's just assume the Android device supports USB and Bluetooth, it throws an error later if not supported
+        final Context  con=this;
+
+        // Initialize the alert box
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this);
+
+        // Set the title and message of the alert box
+        builder.setTitle("Puppy not found");
+        builder.setMessage("How would you like to take your puppy for a walk?\n(Connect the device)");
+
+        // Set the icon of the alert box
+        Resources res = getResources();
+        builder.setIcon(res.getDrawable(R.drawable.dog));
+
+        // If the yes button is pressed
+        builder.setPositiveButton("On a leash\n(USB)", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                device_connection = USB;
+                // Re-initialize Services, now that we know which connection is preferred, we may start the appropriate service (sets Filter and starts service)
+                setFilters();  // Start listening notifications from Services
+                startService(UsbService.class, sensorConnection, null); // Start UsbService(if it was not started before) and Bind it
+            }
+        });
+
+        builder.setNegativeButton("Unleashed\n(Bluetooth)", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                device_connection = BLUETOOTH;
+                bt_established=false;
+                setFilters();
+                startService(BTService.class, sensorConnection, null); // Start UsbService(if it was not started before) and Bind it
+                Intent selectBTdevice = new Intent(con, BTSelectDevice.class);
+                startActivityForResult(selectBTdevice, SELECT_BT_DEVICE);
+            }
+        });
+        // Show the alert box
+        builder.show();
+    }
+
+    // If user has selected Bluetooth, we need to know the address of the device to connect.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CANCELED) {
+            bt_established=false;
+            device_connection=NOT_CONNECTED;
+        } else {
+            if (requestCode == SELECT_BT_DEVICE) {
+                BTService.address = data.getStringExtra("DEVICE_ADDRESS");
+                btService.BTconnect();
+                bt_established=true;
+            }
+        }
+    }
     /*
      *  Runs when the "CO2" button is pressed. Hides every graph except for the CO2 one.
      */
@@ -451,51 +563,86 @@ public class graphScreen extends AppCompatActivity {
 
     /////////////////////
     // USB SERIAL CODE //
-    //  DO NOT MODIFY  //
+    //  DO NOT MODIFY  // WELL, I DID IT ANYWAY /DBASLER 2018-05-18
     /////////////////////
 
     /*
-     * Notifications from UsbService will be received here.
+     * Notifications from UsbService OR Bluetooth Service will be received here.
      */
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+
+    private final BroadcastReceiver sensorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
-                    Toast.makeText(context, "USB Ready", Toast.LENGTH_SHORT).show();
-                    if (usbService != null)
-                    {
-                        String initMessage;
-                        initMessage = "<CFG><OUTRATE>0.5</OUTRATE></CFG>\n";
-                        usbService.write(initMessage.getBytes());
-                    }
-                    break;
-                case UsbService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
-                    Toast.makeText(context, "USB Permission not granted", Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.ACTION_NO_USB: // NO USB CONNECTED
-                    Toast.makeText(context, "No USB connected", Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
-                    Toast.makeText(context, "USB disconnected", Toast.LENGTH_SHORT).show();
-                    break;
-                case UsbService.ACTION_USB_NOT_SUPPORTED: // USB NOT SUPPORTED
-                    Toast.makeText(context, "USB device not supported", Toast.LENGTH_SHORT).show();
-                    break;
+            if (device_connection == BLUETOOTH) {
+                switch (intent.getAction()) {
+                    case BTService.ACTION_BT_READY:
+                        bt_established = true;
+                        final Button button = findViewById(R.id.connectbutton);
+                        button.setText("Disconnect");
+                        break;
+                    case BTService.ACTION_BT_SOCKETERROR:
+                        Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_SHORT).show();
+                        break;
+                    case BTService.ACTION_BT_SOCKETCLOSED:
+                        Toast.makeText(getBaseContext(), "Connection Failure: Socket closed", Toast.LENGTH_SHORT).show();
+                        break;
+                    case BTService.ACTION_BT_NOTSUPPORTED:
+                        Toast.makeText(getBaseContext(), "Device does not support bluetooth", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                    // ADD BT_BROADCASTS HERE
+            }
+            else if (device_connection == USB)  {
+                switch (intent.getAction()) {
+                    case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
+                        Toast.makeText(context, "USB Ready", Toast.LENGTH_SHORT).show();
+                        if (usbService != null) {
+                            String initMessage;
+                            initMessage = "<CFG><OUTRATE>0.5</OUTRATE></CFG>\n";
+                            usbService.write(initMessage.getBytes());
+                        }
+                        break;
+                    case UsbService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
+                        Toast.makeText(context, "USB Permission not granted", Toast.LENGTH_SHORT).show();
+                        device_connection=NOT_CONNECTED;
+                        break;
+                    case UsbService.ACTION_NO_USB: // NO USB CONNECTED
+                        Toast.makeText(context, "No USB connected", Toast.LENGTH_SHORT).show();
+                        device_connection=NOT_CONNECTED;
+                        break;
+                    case UsbService.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
+                        Toast.makeText(context, "USB disconnected", Toast.LENGTH_SHORT).show();
+                        device_connection=NOT_CONNECTED;
+                        break;
+                    case UsbService.ACTION_USB_NOT_SUPPORTED: // USB NOT SUPPORTED
+                        Toast.makeText(context, "USB device not supported", Toast.LENGTH_SHORT).show();
+                        device_connection=NOT_CONNECTED;
+                        break;
+                }
             }
         }
     };
+
+    private BTService btService;
     private UsbService usbService;
+
     private graphScreen.MyHandler mHandler;
-    private final ServiceConnection usbConnection = new ServiceConnection() {
+
+    private final ServiceConnection sensorConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-            usbService = ((UsbService.UsbBinder) arg1).getService();
-            usbService.setHandler(mHandler);
+            if (device_connection == BLUETOOTH) {
+                btService = ((BTService.BTBinder) arg1).getService();
+                btService.setHandler(mHandler);
+            } else if (device_connection == USB)  {
+                usbService = ((UsbService.UsbBinder) arg1).getService();
+                usbService.setHandler(mHandler);
+            }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            btService = null;
             usbService = null;
         }
     };
@@ -503,45 +650,58 @@ public class graphScreen extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        setFilters();  // Start listening notifications from UsbService
-        startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
+        setFilters();  // Start listening notifications from Services
+        if (device_connection == BLUETOOTH){
+            startService(BTService.class, sensorConnection, null);  // Start BTService(if it was not started before) and Bind it
+        } else if (device_connection == USB)  {
+            startService(UsbService.class, sensorConnection, null); // Start UsbService(if it was not started before) and Bind it
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(mUsbReceiver);
-        unbindService(usbConnection);
+        if (device_connection >0 && bt_established){
+            unregisterReceiver(sensorReceiver);
+            unbindService(sensorConnection);
+        }
     }
 
     private void startService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
-        if (!UsbService.SERVICE_CONNECTED) {
-            Intent startService = new Intent(this, service);
-            if (extras != null && !extras.isEmpty()) {
-                Set<String> keys = extras.keySet();
-                for (String key : keys) {
-                    String extra = extras.getString(key);
-                    startService.putExtra(key, extra);
+        if (!BTService.SERVICE_CONNECTED & !UsbService.SERVICE_CONNECTED ) {
+                Intent startService = new Intent(this, service);
+                if (extras != null && !extras.isEmpty()) {
+                    Set<String> keys = extras.keySet();
+                    for (String key : keys) {
+                        String extra = extras.getString(key);
+                        startService.putExtra(key, extra);
+                    }
                 }
+                startService(startService);
             }
-            startService(startService);
-        }
         Intent bindingIntent = new Intent(this, service);
         bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void setFilters() {
         IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbService.ACTION_USB_PERMISSION_GRANTED);
-        filter.addAction(UsbService.ACTION_NO_USB);
-        filter.addAction(UsbService.ACTION_USB_DISCONNECTED);
-        filter.addAction(UsbService.ACTION_USB_NOT_SUPPORTED);
-        filter.addAction(UsbService.ACTION_USB_PERMISSION_NOT_GRANTED);
-        registerReceiver(mUsbReceiver, filter);
+        if (device_connection == BLUETOOTH) {
+            filter.addAction(BTService.ACTION_BT_READY);
+            filter.addAction(BTService.ACTION_BT_SOCKETERROR);
+            filter.addAction(BTService.ACTION_BT_SOCKETCLOSED);
+            filter.addAction(BTService.ACTION_BT_NOTSUPPORTED);
+        } else if (device_connection == USB)  {
+            filter.addAction(UsbService.ACTION_USB_PERMISSION_GRANTED);
+            filter.addAction(UsbService.ACTION_NO_USB);
+            filter.addAction(UsbService.ACTION_USB_DISCONNECTED);
+            filter.addAction(UsbService.ACTION_USB_NOT_SUPPORTED);
+            filter.addAction(UsbService.ACTION_USB_PERMISSION_NOT_GRANTED);
+        }
+        registerReceiver(sensorReceiver, filter);
     }
 
     /*
-     * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
+     * This handler will be passed to UsbService or BTService. Data received from serial port is displayed through this handler
      */
     private static class MyHandler extends Handler {
         private final WeakReference<graphScreen> mActivity;
@@ -552,17 +712,26 @@ public class graphScreen extends AppCompatActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UsbService.MESSAGE_FROM_SERIAL_PORT:
-                    String data = (String) msg.obj;
-                    mActivity.get().reader.addChar(data);
-                    break;
-                case UsbService.CTS_CHANGE:
-                    Toast.makeText(mActivity.get(), "CTS_CHANGE",Toast.LENGTH_LONG).show();
-                    break;
-                case UsbService.DSR_CHANGE:
-                    Toast.makeText(mActivity.get(), "DSR_CHANGE",Toast.LENGTH_LONG).show();
-                    break;
+            if (device_connection == BLUETOOTH) {
+                switch (msg.what) {
+                    case BTService.MESSAGE_FROM_SERIAL_PORT:
+                        String data = (String) msg.obj;
+                        mActivity.get().reader.addChar(data);
+                        break;
+                }
+            } else if (device_connection == USB)  {
+                switch (msg.what) {
+                    case UsbService.MESSAGE_FROM_SERIAL_PORT:
+                        String data = (String) msg.obj;
+                        mActivity.get().reader.addChar(data);
+                        break;
+                    case UsbService.CTS_CHANGE:
+                        Toast.makeText(mActivity.get(), "CTS_CHANGE", Toast.LENGTH_LONG).show();
+                        break;
+                    case UsbService.DSR_CHANGE:
+                        Toast.makeText(mActivity.get(), "DSR_CHANGE", Toast.LENGTH_LONG).show();
+                        break;
+                }
             }
         }
     }
@@ -605,7 +774,7 @@ public class graphScreen extends AppCompatActivity {
         public void addChar(String input)
         {
 
-            // Check to make sure its not a space or ampty
+            // Check to make sure its not a space or empty
             if (input.equals("") || input.equals(" "))
             {
                 return;
@@ -618,6 +787,7 @@ public class graphScreen extends AppCompatActivity {
                 currentStream += input;
                 completeStream = currentStream.trim();
                 currentStream = "";
+                // Toast.makeText(getBaseContext(),completeStream, Toast.LENGTH_LONG).show(); //DEBUG ONLY
                 manager.updateData(completeStream);
             }
 
@@ -745,7 +915,7 @@ public class graphScreen extends AppCompatActivity {
         String[] tempData;
         int numOfPoints;
 
-        if (graphPoints == ""){
+        if (graphPoints.equals("")){
             return 0;
         }
 
@@ -781,7 +951,7 @@ public class graphScreen extends AppCompatActivity {
         double tempX;
         double tempY;
 
-        if (graphPoints == ""){
+        if (graphPoints.equals("")){
             return 0.0;
         }
 
@@ -817,7 +987,7 @@ public class graphScreen extends AppCompatActivity {
 
         return rSquared;
     }
-    private double getXRangeStart(String graphPoints) throws Exception{
+    private double getXRangeStart(String graphPoints) {
 
         String[] tempData;
         String[] firstData;
@@ -832,7 +1002,7 @@ public class graphScreen extends AppCompatActivity {
         return firstSecond;
     }
 
-    private double getXRangeEnd(String graphPoints) throws Exception{
+    private double getXRangeEnd(String graphPoints) {
 
         String[] tempData;
         String[] lastData;

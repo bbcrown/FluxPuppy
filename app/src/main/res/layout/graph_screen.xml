@@ -8,9 +8,48 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/sitedisplay"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:text="Site" />
+
+        <TextView
+            android:id="@+id/sampledisplay"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:text="Sample" />
+
+        <TextView
+            android:id="@+id/devicedisplay"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:text="Li-Cor 8XX" />
+
+        <Button
+            android:id="@+id/connectbutton"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"
+            android:background="@android:drawable/btn_default"
+            android:onClick="connectDeviceToggle"
+            android:textSize="10sp"
+            android:text="Connect" />
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="0.7"
         android:orientation="vertical">
+
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graph1"

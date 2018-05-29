@@ -10,11 +10,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
 
     <uses-feature
         android:name="android.hardware.usb.host"
-        android:required="true" />
+        android:required="false" />
+    <uses-feature android:name="android.hardware.bluetooth" />
     <uses-feature android:name="android.hardware.camera"/>
 
 
@@ -66,8 +69,16 @@
 
         </activity>
 
+        <activity android:name=".BTSelectDevice"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:screenOrientation="sensorPortrait">
+         </activity>
+
         <service
             android:name=".UsbService"
+            android:enabled="true" />
+        <service
+            android:name=".BTService"
             android:enabled="true" />
 
         <provider

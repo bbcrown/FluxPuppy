@@ -232,14 +232,7 @@ public class GraphManager implements Runnable
      */
     public boolean isEmpty()
     {
-        if (dataArray.isEmpty())
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return dataArray.isEmpty();
     }
 
     //////////////////////
