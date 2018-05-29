@@ -25,12 +25,12 @@
             android:layout_weight="0.25"
             android:text="Sample" />
 
-        <TextView
+<!--        <TextView
             android:id="@+id/devicedisplay"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:text="Li-Cor 8XX" />
+            android:text="Li-Cor 8XX" />-->
 
         <Button
             android:id="@+id/connectbutton"
