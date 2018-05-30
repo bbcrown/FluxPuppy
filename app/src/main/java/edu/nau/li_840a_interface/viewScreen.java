@@ -355,10 +355,10 @@ public class viewScreen extends AppCompatActivity {
 
             values = lines[count].split(",");
 
-            co2Points += values[0] + "," + values[1] + "\n";
-            h2oPoints += values[0] + "," + values[2] + "\n";
-            tempPoints += values[0] + "," + values[3] + "\n";
-            presPoints += values[0] + "," + values[4] + "\n";
+            co2Points += values[6] + "," + values[7] + "\n";
+            h2oPoints += values[6] + "," + values[8] + "\n";
+            tempPoints += values[6] + "," + values[9] + "\n";
+            presPoints += values[6] + "," + values[10] + "\n";
 
         }
 

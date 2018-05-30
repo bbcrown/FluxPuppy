@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import java.util.ArrayList;
 import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class GraphManager implements Runnable
 {
@@ -252,7 +254,7 @@ public class GraphManager implements Runnable
         output = "";
 
         // Add the CSV header
-        output += "Seconds,CO2,H2O,Temperature,Pressure\n";
+        output += "Year,Month,Day,Hour,Minute,Second,RunTime,CO2,H2O,Temperature,Pressure\n";
 
         // Loop through each data series in the data array
         for (DataSeries series : dataArray)
@@ -339,6 +341,15 @@ public class GraphManager implements Runnable
     {
 
         //public long time;
+        public int year;
+        public int month;
+        public int day;
+        public int hour;
+        public int minute;
+        public int second;
+
+        public String timeStamp;
+
         public float time;
         public float co2;
         public float h2o;
@@ -355,12 +366,21 @@ public class GraphManager implements Runnable
         {
 
             float[] parse;
+            // Get an array of all the parsed values from the data
+            parse = parseData(data);
 
             // Save the time the data series was initialized at
             this.time = (float) time / 1000;
 
-            // Get an array of all the parsed values from the data
-            parse = parseData(data);
+            timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+
+            year = Calendar.getInstance().get(Calendar.YEAR);
+            month = Calendar.getInstance().get(Calendar.MONTH);
+            day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+            hour = Calendar.getInstance().get(Calendar.HOUR);
+            minute = Calendar.getInstance().get(Calendar.MINUTE);
+            second = Calendar.getInstance().get(Calendar.SECOND);
+
 
             // Assign each value of the array to the class member variable
             co2 = parse[0];
@@ -377,6 +397,7 @@ public class GraphManager implements Runnable
          *  with the application, then these exceptions should never occur, but under rare sets of
          *  circumstances, they might,
          */
+
         private float[] parseData(String data)
         {
 
@@ -470,7 +491,7 @@ public class GraphManager implements Runnable
             output = "";
 
             // Add each value to the output string
-            output += time + "," + co2 + "," + h2o + "," + temp + "," + pres;
+            output += year + "," + month + "," + day + "," + hour + "," + minute + "," + second + "," + time + "," + co2 + "," + h2o + "," + temp + "," + pres;
 
             // Return the output
             return output;
