@@ -53,7 +53,7 @@ import edu.nau.li_840a_interface.R;
 public class fileDirectory extends AppCompatActivity implements OnClickListener {
 
     EditText et_Filter;
-    Button btnSend, btnView, btnDel, btnFilter, btnUndo, btnHome;
+    Button btnSend, btnView, btnDel, btnFilter, btnNewDataset, btnHome;
     private ListView lv;
     String message;
     Uri URI = null;
@@ -294,7 +294,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
         });
         //SETS BUTTONS AND EDITEXT OBJECTS
         et_Filter = (EditText) findViewById(R.id.et_filter);
-        btnUndo = (Button) findViewById(R.id.btn_undoFilter);
+        btnNewDataset = (Button) findViewById(R.id.btn_newdataset);
         btnSend = (Button) findViewById(R.id.btn_email);
         btnView = (Button) findViewById(R.id.btn_view);
         btnDel = (Button) findViewById(R.id.btn_delete);
@@ -304,8 +304,6 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
         btnView.setOnClickListener(this);
         btnView.setClickable(false);
         btnView.setBackgroundColor(Color.TRANSPARENT);
-        btnUndo.setClickable(false);
-        btnUndo.setBackgroundColor(Color.TRANSPARENT);
         btnSend.setClickable(false);
         btnSend.setBackgroundColor(Color.TRANSPARENT);
 
@@ -318,80 +316,60 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
 
             @Override
             public void onClick(View view) {
-                if(et_Filter.getText().toString().equals("") ){return;}
-                btnUndo.setClickable(true);
-                btnUndo.setBackgroundResource(android.R.drawable.btn_default);
-                int listSize = lv.getCount();
-                for(int l= 0; l < lv.getCount(); l++){
-                    lv.setItemChecked(l, false);
-
-                }
-                checkFileCount();
-                String filter = et_Filter.getText().toString();
-                for (int l = 0; l < lv.getCount(); l++){
-                    if((lv.getItemAtPosition(l).toString().toLowerCase()).contains(filter.toLowerCase()) == true){
-                        tempFiles.add(lv.getItemAtPosition(l).toString());
-
+                if (btnFilter.getText().toString().equals("Apply Filter")) {
+                    if(et_Filter.getText().toString().equals("") ){return;}
+                    int listSize = lv.getCount();
+                    for(int l= 0; l < lv.getCount(); l++){
+                        lv.setItemChecked(l, false);
 
                     }
+                    checkFileCount();
+                    String filter = et_Filter.getText().toString();
+                    for (int l = 0; l < lv.getCount(); l++){
+                        if((lv.getItemAtPosition(l).toString().toLowerCase()).contains(filter.toLowerCase()) == true){
+                            tempFiles.add(lv.getItemAtPosition(l).toString());
+
+
+                        }
+                    }
+                    appFiles.clear();
+                    arrayAdapter.clear();
+                    for(int test =0; test < tempFiles.size(); test++)
+                    {
+                        appFiles.add(tempFiles.get(test));
+                    }
+                    btnFilter.setText("Undo Filter");
+                } else {
+                    appFiles.clear();
+                    arrayAdapter.clear();
+                    tempFiles.clear();
+
+                    for (int i = 0; i < context.getFilesDir().listFiles().length - 1; i++) {
+                        if (sortedFiles.get(i).contains(metaCheck)) {
+                            appFiles.add(sortedFiles.get(i).substring(2));
+                        }
+                        else {
+                            //appFiles.add(context.getFilesDir().list()[i]);
+                        }
+                    }
+                    for(int l= 0; l < lv.getCount(); l++){
+                        lv.setItemChecked(l, false);
+                    }
+                    checkFileCount();
+                    btnFilter.setText("Apply Filter");
                 }
-                appFiles.clear();
-                arrayAdapter.clear();
-                for(int test =0; test < tempFiles.size(); test++)
-                {
-                    appFiles.add(tempFiles.get(test));
-                }
-
-                btnFilter.setBackgroundColor(Color.TRANSPARENT);
-                btnFilter.setClickable(false);
-
-
             }
         });
 
 
+        String CheckFlag;
+        CheckFlag = getIntent().getStringExtra("FROM_HOME");
+        if (CheckFlag.equals("True")) {
+            btnNewDataset.setText("");
+            btnNewDataset.setClickable(false);
+            btnNewDataset.setBackgroundColor(Color.TRANSPARENT);
+        }
 
-
-        //Undoes the effect of the filter method, recreating directory list as normal
-        btnUndo.setOnClickListener(new View.OnClickListener() {
-
-
-
-            @Override
-            public void onClick(View view) {
-                btnUndo.setClickable(false);
-                btnUndo.setBackgroundColor(Color.TRANSPARENT);
-                appFiles.clear();
-                arrayAdapter.clear();
-                tempFiles.clear();
-
-                for (int i = 0; i < context.getFilesDir().listFiles().length - 1; i++) {
-                    if (sortedFiles.get(i).contains(metaCheck)) {
-                        appFiles.add(sortedFiles.get(i).substring(2));
-                    }
-
-                    else {
-                        //appFiles.add(context.getFilesDir().list()[i]);
-                    }
-
-
-                }
-                btnFilter.setBackgroundResource(android.R.drawable.btn_default);
-                btnFilter.setClickable(true);
-
-                for(int l= 0; l < lv.getCount(); l++){
-                    lv.setItemChecked(l, false);
-
-                }
-                checkFileCount();
-
-            }
-
-
-
-
-
-        });
     }
 
 
@@ -492,6 +470,25 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
         startActivity(homeScreen);
 
     }
+
+
+    //This is a simple method that is attached  to the new dataset button (if file directory is started from graph screen) that takes the user to a new metadata screen
+    public void goNewDataSet(View view)
+    {
+
+        Intent metaData;
+
+        metaData = new Intent(this, metaData.class);
+
+        metaData.putExtra("FLAG", "False");
+
+        startActivity(metaData);
+
+    }
+
+
+
+
 
     //This method is responsible for sorting the files into a newest-first ordering
     ArrayList<String> sortFiles(String[] allFiles){

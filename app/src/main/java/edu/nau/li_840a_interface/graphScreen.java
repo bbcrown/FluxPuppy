@@ -566,6 +566,8 @@ public class graphScreen extends AppCompatActivity {
 
         // Initialize a new file screen and take the user there
         fileScreen = new Intent(this, fileDirectory.class);
+        fileScreen.putExtra("FROM_HOME", "False");
+
         startActivity(fileScreen);
 
     }
