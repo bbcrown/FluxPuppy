@@ -13,13 +13,6 @@
         android:layout_weight="0.1"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_undoFilter"
-            android:text="Undo Filter"
-            android:background = "@android:drawable/btn_default"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="0.25"/>
 
         <Button
             android:id="@+id/btn_filter"
@@ -37,6 +30,15 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.5"/>
+
+        <Button
+            android:id="@+id/btn_newdataset"
+            android:text="New Dataset"
+            android:onClick="goNewDataSet"
+            android:background = "@android:drawable/btn_default"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25"/>
 
     </LinearLayout>
 

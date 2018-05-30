@@ -40,7 +40,7 @@ public class BTService extends Service{
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-        //creates secure outgoing connecetion with BT device using UUID
+        //creates secure outgoing connection with BT device using UUID
     }
 
     @Override
@@ -120,7 +120,7 @@ public class BTService extends Service{
 
         //I send a character when resuming.beginning transmission to check device is connected
         //If it is not an exception will be thrown in the write method and finish() will be called
-        mConnectedThread.write("x");
+        mConnectedThread.write("<CFG><OUTRATE>0.5</OUTRATE></CFG>\n");
     }
 
 
@@ -169,7 +169,7 @@ public class BTService extends Service{
                 }
             }
 
-            //write method (Not Actively used in this application.... merely as a test if connection is established.
+            //write method (Not Actively used in this application.... merely as a test if connection is established and initial setting of the refresh rate...
             // That said, the command <li840>?</li840> would yield a long list of configuration parameters of the device
             public void write(String input) {
                 byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
