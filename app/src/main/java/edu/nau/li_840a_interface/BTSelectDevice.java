@@ -33,14 +33,44 @@ import java.util.Set;
      public void onResume()
      {
          super.onResume();
-         //***************
          checkBTState();
-         if (!bluetooth_active){ // NO BLUETOOTH SUPPORTED
+     }
+     private void checkBTState() {
+         // Check device has Bluetooth and that it is turned on
+         mBtAdapter=BluetoothAdapter.getDefaultAdapter(); // CHECK THIS OUT THAT IT WORKS!!!
+         if(mBtAdapter==null) { // NO BLUETOOTH SUPPORTED
+             Toast.makeText(getBaseContext(), "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
              Intent intent=new Intent();
              setResult(RESULT_CANCELED, intent);
              finish();
-             return;}
+             return;
+         } else {
+             if (!mBtAdapter.isEnabled()) {
+                 //Prompt user to turn on Bluetooth
+                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                 startActivityForResult(enableBtIntent, 1);
+             } else {deviceselection();}
+         }
+         }
 
+     @Override
+     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+         super.onActivityResult(requestCode, resultCode, data);
+         if (requestCode==1){
+             if (resultCode==RESULT_OK) {
+                 deviceselection();
+             } else {
+                 Toast.makeText(getBaseContext(), "You need to grant Bluetooth permissions in order to use Bluetooth", Toast.LENGTH_SHORT).show();
+                 Intent intent=new Intent();
+                 setResult(RESULT_CANCELED, intent);
+                 finish();
+                 return;}
+
+         }
+     }
+
+
+     public void deviceselection(){
          textView1 = findViewById(R.id.connecting);
          textView1.setTextSize(20);
          textView1.setText(" ");
@@ -66,7 +96,7 @@ import java.util.Set;
                  mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
              }
          } else {
-             String noDevices = "No devices have been paire";// getResources().getText(R.string.none_paired).toString();
+             String noDevices = "No devices have been paired";// getResources().getText(R.string.none_paired).toString();
              mPairedDevicesArrayAdapter.add(noDevices);
          }
      }
@@ -85,21 +115,5 @@ import java.util.Set;
              finish();
          }
      };
-
-     private void checkBTState() {
-         // Check device has Bluetooth and that it is turned on
-         mBtAdapter=BluetoothAdapter.getDefaultAdapter(); // CHECK THIS OUT THAT IT WORKS!!!
-         if(mBtAdapter==null) {
-             Toast.makeText(getBaseContext(), "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
-             bluetooth_active=false;
-         } else {
-             if (!mBtAdapter.isEnabled()) {
-                 //Prompt user to turn on Bluetooth
-                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                 startActivityForResult(enableBtIntent, 1);
-             } else {bluetooth_active=true;}
-         }
-         }
-
 
  }

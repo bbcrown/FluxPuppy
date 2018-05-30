@@ -33,6 +33,8 @@ public class UsbService extends Service {
     public static final String ACTION_USB_DISCONNECTED = "com.felhr.usbservice.USB_DISCONNECTED";
     public static final String ACTION_CDC_DRIVER_NOT_WORKING = "com.felhr.connectivityservices.ACTION_CDC_DRIVER_NOT_WORKING";
     public static final String ACTION_USB_DEVICE_NOT_WORKING = "com.felhr.connectivityservices.ACTION_USB_DEVICE_NOT_WORKING";
+    public static final String ACTION_USB_INITIALIZE = "package edu.nau.li_840a_interface.ACTION_USB_INITIALIZE";
+
     public static final int MESSAGE_FROM_SERIAL_PORT = 0;
     public static final int CTS_CHANGE = 1;
     public static final int DSR_CHANGE = 2;
@@ -112,6 +114,9 @@ public class UsbService extends Service {
             } else if (arg1.getAction().equals(ACTION_USB_ATTACHED)) {
                 if (!serialPortConnected)
                     findSerialPortDevice(); // A USB device has been attached. Try to open it as a Serial port
+            } else if (arg1.getAction().equals(ACTION_USB_INITIALIZE)) { // User choose to us an USB connection... Check if available
+                if (!serialPortConnected)
+                    findSerialPortDevice();
             } else if (arg1.getAction().equals(ACTION_USB_DETACHED)) {
                 // Usb device was disconnected. send an intent to the Main Activity
                 Intent intent = new Intent(ACTION_USB_DISCONNECTED);
@@ -209,6 +214,7 @@ public class UsbService extends Service {
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(ACTION_USB_DETACHED);
         filter.addAction(ACTION_USB_ATTACHED);
+        filter.addAction(ACTION_USB_INITIALIZE);
         registerReceiver(usbReceiver, filter);
     }
 
