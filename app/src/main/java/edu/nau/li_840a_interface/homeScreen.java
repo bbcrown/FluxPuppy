@@ -96,7 +96,7 @@ public class homeScreen extends AppCompatActivity {
         Intent fileDirectory;
 
         fileDirectory = new Intent(this, fileDirectory.class);
-        fileDirectory.putExtra("FROM_HOME", "True");
+        fileDirectory.putExtra("ND_BUTTON", "False");
         startActivity(fileDirectory);
 
     }
