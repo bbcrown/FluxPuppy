@@ -25,7 +25,7 @@
     <string name="load">Loading ...</string>
 
     <string name="about"> Android Interface to LICOR LI-820 and LI-840 gas analyzers</string>
-    <string name="licence">FluxPuppy is licensed under the GNU General Public License v3.0\nThe source code is avaliable on GitHub /bnasr/FluxPuppy</string>
+    <string name="licence">FluxPuppy is licensed under the GNU General Public License v3.0\nThe source code is avaliable on GitHub @bnasr/FluxPuppy</string>
 
     <string-array name="names_array">
         <item>Andrew Richardson</item>
