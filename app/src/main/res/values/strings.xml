@@ -2,26 +2,26 @@
     <string name="app_name">Flux Puppy</string>
     <string name="version_name">0.9.1</string>
     <string name="meta_data">Metadata</string>
-    <string name="finish">Start Measurement</string>
+    <string name="finish">Start measurement</string>
     <string name="date">Date:</string>
     <string name="time">Time:</string>
     <string name="gps">GPS:</string>
-    <string name="operator_name">Operator Name:</string>
-    <string name="site_name">Site Name:</string>
-    <string name="plot_number">Plot Number:</string>
+    <string name="operator_name">Operator name:</string>
+    <string name="site_name">Site name:</string>
+    <string name="plot_number">Plot number:</string>
     <string name="tempurature">Temperature:</string>
     <string name="todo">todo</string>
     <string name="required">Required</string>
     <string name="cancel">Cancel</string>
     <string name="image_preview">Image Preview</string>
-    <string name="tap_to_enter_elevation">Tap To Enter Elevation (meters)</string>
-    <string name="tap_to_enter_longitude">Tap To Enter Longitude</string>
-    <string name="tap_to_enter_latitude">Tap To Enter Latitude</string>
+    <string name="tap_to_enter_elevation">Tap to enter elevation (meters)</string>
+    <string name="tap_to_enter_longitude">Tap to enter longitude</string>
+    <string name="tap_to_enter_latitude">Tap to enter latitude</string>
     <string name="retry_gps">Retry GPS</string>
-    <string name="degrees_in_celsius">Degrees in Celsius</string>
+    <string name="degrees_in_celsius">Degrees in celsius</string>
     <string name="temperature">Temperature:</string>
     <string name="sample_id">Sample ID:</string>
-    <string name="additional_comments">Additional Comments</string>
+    <string name="additional_comments">Additional comments</string>
     <string name="load">Loading ...</string>
 
     <string-array name="names_array">
@@ -33,5 +33,6 @@
         <item>Jimmy Beasely</item>
         <item>Samuel Beals</item>
         <item>Joseph Kelroy</item>
+        <item>Andrew Greene</item>
     </string-array>
 </resources>
