@@ -38,11 +38,13 @@
         android:text="File Directory"
         android:onClick="goFileDirectory"/>
 
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="0.1"
-        android:text="Version 1.0"
-        android:gravity="center"/>
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:text="@string/version_name"
+        android:onClick="about"/>
 
 </LinearLayout>

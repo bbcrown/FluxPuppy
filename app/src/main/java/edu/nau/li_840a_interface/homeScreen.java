@@ -8,9 +8,12 @@
 package edu.nau.li_840a_interface;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -100,6 +103,32 @@ public class homeScreen extends AppCompatActivity {
         startActivity(fileDirectory);
 
     }
+
+    public void about(View view){
+        // Initialize the alert box
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this);
+
+        // Set the title and message of the alert box
+        builder.setTitle("Flux Puppy");
+        builder.setMessage(getString(R.string.about)+"\n\nVersion "+ getString(R.string.version_name)
+                + "\n\n" + getString(R.string.licence));
+
+        // Set the icon of the alert box
+        Resources res = getResources();
+        builder.setIcon(res.getDrawable(R.drawable.dog));
+
+        // If the yes button is pressed
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+
+        // Show the alert box
+        builder.show();
+    }
+
 
     @Override
     public void onBackPressed()
