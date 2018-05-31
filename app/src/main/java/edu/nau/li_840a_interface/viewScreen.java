@@ -76,6 +76,10 @@ public class viewScreen extends AppCompatActivity {
     public EditText comments;
     private String origionalComments;
 
+    private String nd_flag;
+    // used to activate set 'new dataset' button when returning to the
+    // 'fileDirectory' screen while doing measurements...
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -137,6 +141,8 @@ public class viewScreen extends AppCompatActivity {
         // Image
         ImageView metaImageDisplay = findViewById(R.id.metaDataImage);
 
+        nd_flag = getIntent().getStringExtra("ND_BUTTON");
+        
         //try to open file and save string metadata
         try {
 
@@ -635,6 +641,8 @@ public class viewScreen extends AppCompatActivity {
         Intent fileDirectory;
 
         fileDirectory = new Intent(viewScreen.this, fileDirectory.class);
+
+        fileDirectory.putExtra("ND_BUTTON", nd_flag);
 
         startActivity(fileDirectory);
     }

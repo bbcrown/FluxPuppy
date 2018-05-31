@@ -63,6 +63,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
     ArrayList<String> selectedFiles = new ArrayList<String>();
     ArrayList<String> tempFiles = new ArrayList<String>();
 
+    private String nd_flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -362,9 +363,9 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
         });
 
 
-        String CheckFlag;
-        CheckFlag = getIntent().getStringExtra("FROM_HOME");
-        if (CheckFlag.equals("True")) {
+
+        nd_flag = getIntent().getStringExtra("ND_BUTTON");
+        if (nd_flag.equals("False")) {
             btnNewDataset.setText("");
             btnNewDataset.setClickable(false);
             btnNewDataset.setBackgroundColor(Color.TRANSPARENT);
@@ -389,6 +390,8 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
             viewScreen.putExtra("FILE", "M-" + lv.getItemAtPosition(viewFilePos).toString());
             viewScreen.putExtra("GRAPHFILE", "G-" + lv.getItemAtPosition(viewFilePos).toString());
             viewScreen.putExtra("IMAGE", "I-" + lv.getItemAtPosition(viewFilePos).toString().substring(0, lv.getItemAtPosition(viewFilePos).toString().length() - 4) + ".png");
+            viewScreen.putExtra("ND_BUTTON", nd_flag);
+
             startActivity(viewScreen);
 
         }
