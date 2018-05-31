@@ -35,7 +35,7 @@
         android:layout_height="0dip"
         android:layout_weight="0.15"
         android:background = "@android:drawable/btn_default"
-        android:text="File Directory"	
+        android:text="File Directory"
         android:onClick="goFileDirectory"/>
 
     <Button

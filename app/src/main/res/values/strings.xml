@@ -13,7 +13,7 @@
     <string name="todo">todo</string>
     <string name="required">Required</string>
     <string name="cancel">Cancel</string>
-    <string name="image_preview">Image Preview</string>
+    <string name="image_preview">Image preview</string>
     <string name="tap_to_enter_elevation">Tap to enter elevation (meters)</string>
     <string name="tap_to_enter_longitude">Tap to enter longitude</string>
     <string name="tap_to_enter_latitude">Tap to enter latitude</string>
