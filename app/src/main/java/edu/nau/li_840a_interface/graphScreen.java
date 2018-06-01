@@ -99,7 +99,7 @@ public class graphScreen extends AppCompatActivity {
 
         textIds[4] = findViewById(R.id.sitedisplay);
         textIds[5] = findViewById(R.id.sampledisplay);
-        textIds[6] = findViewById(R.id.instrumnetdisplay);
+        textIds[6] = findViewById(R.id.instrumentdisplay);
 
         Intent intent = getIntent();
         Bundle bd = intent.getExtras();

@@ -30,7 +30,7 @@
             android:text="Sample" />
 
         <TextView
-            android:id="@+id/instrumnetdisplay"
+            android:id="@+id/instrumentdisplay"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
