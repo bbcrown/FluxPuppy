@@ -104,7 +104,7 @@ public class viewScreen extends AppCompatActivity {
                                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
                     }
                 });
-
+        TextView instrument = findViewById(R.id.tv_Instrument);
         TextView site = findViewById(R.id.tv_SiteName);
         TextView operator = findViewById(R.id.tv_OpName);
         TextView sampleID = findViewById(R.id.tv_SampleID);
@@ -193,6 +193,7 @@ public class viewScreen extends AppCompatActivity {
 
             fileName.setText("Sorry there was an error opening your file, please try again!");
             fileName.setText(null);
+            instrument.setText(null);
             operator.setText(null);
             site.setText(null);
             sampleID.setText(null);
@@ -222,17 +223,18 @@ public class viewScreen extends AppCompatActivity {
 
         // Put text in each box
         fileName.setText("FILE : " + metaFile.substring(2));
-        operator.setText("Operator Name : " + metaDataArray[0]);
-        site.setText("Site  Name : " + metaDataArray[1]);
-        sampleID.setText("Sample ID : " + metaDataArray[2]);
-        temperature.setText("Temperature : " + metaDataArray[3]);
-        comments.setText(metaDataArray[4]);
-        timeAndDate.setText("Time and Date : " + metaDataArray[5]);
-        longitude.setText("Longitude : " + metaDataArray[6]);
-        latitude.setText("Latitude : " + metaDataArray[7]);
-        elevation.setText("Elevation : " + metaDataArray[8]);
+        instrument.setText("Instrument : " + metaDataArray[0]);
+        operator.setText("Operator Name : " + metaDataArray[1]);
+        site.setText("Site  Name : " + metaDataArray[2]);
+        sampleID.setText("Sample ID : " + metaDataArray[3]);
+        temperature.setText("Temperature : " + metaDataArray[4]);
+        comments.setText(metaDataArray[5]);
+        timeAndDate.setText("Time and Date : " + metaDataArray[6]);
+        longitude.setText("Longitude : " + metaDataArray[7]);
+        latitude.setText("Latitude : " + metaDataArray[8]);
+        elevation.setText("Elevation : " + metaDataArray[9]);
 
-        // set origional comments for checking if they changed later
+        // set original comments for checking if they changed later
         origionalComments = comments.getText().toString();
 
         //get graph info to string array

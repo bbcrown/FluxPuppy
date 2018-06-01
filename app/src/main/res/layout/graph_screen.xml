@@ -29,12 +29,14 @@
             android:gravity="center_vertical"
             android:text="Sample" />
 
-<!--        <TextView
-            android:id="@+id/devicedisplay"
+        <TextView
+            android:id="@+id/instrumnetdisplay"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:text="Li-Cor 8XX" />-->
+            android:gravity="right|center_vertical"
+            android:text=""
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/connectbutton"

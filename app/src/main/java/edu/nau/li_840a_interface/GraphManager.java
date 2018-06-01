@@ -34,10 +34,12 @@ public class GraphManager implements Runnable
     private TextView h2oDisplay;
     private TextView tempDisplay;
     private TextView presDisplay;
+    private TextView instrumentDisplay;
     private long startTime;
     private boolean running;
     private boolean logging;
     private String lastData;
+    public String instrument;
 
     ///////////////
     // CONSTANTS //
@@ -76,6 +78,7 @@ public class GraphManager implements Runnable
         h2oDisplay = textIds[1];
         tempDisplay = textIds[2];
         presDisplay = textIds[3];
+        instrumentDisplay = textIds[6];
 
         // Get the start time
         time = new Date();
@@ -100,6 +103,23 @@ public class GraphManager implements Runnable
         Date time;
         long currentTime;
         long timeDiff;
+
+        // GET INSTRUMENT
+        data = this.getData();
+        while (data == null){     // Wait for the first data to arrive to get instrument
+            try { Thread.sleep(SLEEP_TIME); } catch (Exception exception) {}
+            data = this.getData();
+        }
+
+        try { instrument = data.split("><",2)[0].substring(1).toUpperCase();
+        } catch (Exception exception) { instrument="unknown";}
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+        instrumentDisplay.setText(instrument);
+            }
+        });
+        // END GET INSTRUMENT
+
 
         // Loops until the screen is deconstructed
         while (running)
