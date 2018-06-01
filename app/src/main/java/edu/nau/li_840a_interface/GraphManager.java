@@ -346,10 +346,10 @@ public class GraphManager implements Runnable
                 presGraph.addPoint(newSeries.pres, newSeries.time);
 
                 // Update each text view with the data series
-                co2Display.setText(String.valueOf(newSeries.co2));
-                h2oDisplay.setText(String.valueOf(newSeries.h2o));
-                tempDisplay.setText(String.valueOf(newSeries.temp));
-                presDisplay.setText(String.valueOf(newSeries.pres));
+                co2Display.setText(String.format("%.1f ppm", newSeries.co2));
+                h2oDisplay.setText(String.format("%.3f ppt", newSeries.h2o));
+                tempDisplay.setText(String.format("%.1f °C", newSeries.temp));
+                presDisplay.setText(String.format("%.1f kPa", newSeries.pres));
 
             }
         });
