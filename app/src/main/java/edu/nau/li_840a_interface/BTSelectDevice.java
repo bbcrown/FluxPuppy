@@ -16,8 +16,7 @@ import java.util.Set;
 
  public class BTSelectDevice  extends Activity {
 
-     TextView textView1;
-     boolean bluetooth_active=false;
+     boolean connecting=false;
 
      // Member fields
      private BluetoothAdapter mBtAdapter;
@@ -35,6 +34,7 @@ import java.util.Set;
          super.onResume();
          checkBTState();
      }
+
      private void checkBTState() {
          // Check device has Bluetooth and that it is turned on
          mBtAdapter=BluetoothAdapter.getDefaultAdapter(); // CHECK THIS OUT THAT IT WORKS!!!
@@ -71,12 +71,9 @@ import java.util.Set;
 
 
      public void deviceselection(){
-         textView1 = findViewById(R.id.connecting);
-         textView1.setTextSize(20);
-         textView1.setText(" ");
 
          // Initialize array adapter for paired devices
-         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.bt_devices);
+         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1);
 
          // Find and set up the ListView for paired devices
          ListView pairedListView = findViewById(R.id.paired_devices);
@@ -104,10 +101,13 @@ import java.util.Set;
      // Set up on-click listener for the list (nicked this - unsure)
      private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
          public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-             textView1.setText("Connecting...");
+             if (connecting) return;
+             connecting=true;
              // Get the device MAC address, which is the last 17 chars in the View
              String info = ((TextView) v).getText().toString();
              String address = info.substring(info.length() - 17);
+             ((TextView) v).setText(info +"\n" + "connecting...");
+             ((TextView) v).setBackgroundColor(0xff99cc00);
              // Make an intent to start next activity while taking an extra which is the MAC address.
              Intent intent=new Intent();
              intent.putExtra("DEVICE_ADDRESS",address);
