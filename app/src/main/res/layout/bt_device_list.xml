@@ -8,9 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Select bluetooth device to connect"
+        android:text="Select bluetooth device to connect to your instrument"
         android:background="#666"
-        android:textColor="#0F0"
+        android:textColor="#FF99CC00"
         android:paddingLeft="5dp"
         />
     <ListView android:id="@+id/paired_devices"
@@ -20,17 +20,12 @@
         android:layout_weight="1"
         />
 
-    <TextView
-        android:id="@+id/connecting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/infoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="If no devices are listed please pair your device in Android settings"
+        android:text="If your device isn't listed, please pair your device in Android settings first"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout

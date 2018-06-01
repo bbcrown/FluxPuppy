@@ -34,15 +34,18 @@ public class GraphManager implements Runnable
     private TextView h2oDisplay;
     private TextView tempDisplay;
     private TextView presDisplay;
+    private TextView instrumentDisplay;
     private long startTime;
     private boolean running;
     private boolean logging;
     private String lastData;
+    private boolean newDataAvailable;
+    public String instrument;
 
     ///////////////
     // CONSTANTS //
     ///////////////
-    private static final int SLEEP_TIME = 1000;
+    private static final int SLEEP_TIME = 200;
 
 
     /*
@@ -76,6 +79,7 @@ public class GraphManager implements Runnable
         h2oDisplay = textIds[1];
         tempDisplay = textIds[2];
         presDisplay = textIds[3];
+        instrumentDisplay = textIds[6];
 
         // Get the start time
         time = new Date();
@@ -101,23 +105,44 @@ public class GraphManager implements Runnable
         long currentTime;
         long timeDiff;
 
+        // GET INSTRUMENT
+        data = this.getData();
+        while (data == null){     // Wait for the first data to arrive to get instrument
+            try { Thread.sleep(SLEEP_TIME); } catch (Exception exception) {}
+            data = this.getData();
+        }
+
+        try { instrument = data.split("><",2)[0].substring(1).toUpperCase();
+        } catch (Exception exception) { instrument="unknown";}
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+        instrumentDisplay.setText(instrument);
+            }
+        });
+        // END GET INSTRUMENT
+
+
         // Loops until the screen is deconstructed
         while (running)
         {
+            // Use only new data...
+            if (newDataAvailable) {
+                // Get the latest data from the instrument
+                data = this.getData();
 
-            // Get the latest data from the instrument
-            data = this.getData();
+                // Get the current time
+                time = new Date();
+                currentTime = time.getTime();
 
-            // Get the current time
-            time = new Date();
-            currentTime = time.getTime();
+                // Calculate the time difference between when the screen started
+                timeDiff = currentTime - startTime;
 
-            // Calculate the time difference between when the screen started
-            timeDiff = currentTime - startTime;
+                // Add the points to the graphs
+                this.addPoints(data, timeDiff);
 
-            // Add the points to the graphs
-            this.addPoints(data, timeDiff);
-
+                // flag data as recorded
+                newDataAvailable = false;
+            }
             // Wait the specified wait time
             try
             {
@@ -139,6 +164,7 @@ public class GraphManager implements Runnable
     public void updateData(String data)
     {
         lastData = data;
+        newDataAvailable=true;
     }
 
     ////////////////////
@@ -320,10 +346,10 @@ public class GraphManager implements Runnable
                 presGraph.addPoint(newSeries.pres, newSeries.time);
 
                 // Update each text view with the data series
-                co2Display.setText(String.valueOf(newSeries.co2));
-                h2oDisplay.setText(String.valueOf(newSeries.h2o));
-                tempDisplay.setText(String.valueOf(newSeries.temp));
-                presDisplay.setText(String.valueOf(newSeries.pres));
+                co2Display.setText(String.format("%.1f ppm", newSeries.co2));
+                h2oDisplay.setText(String.format("%.3f ppt", newSeries.h2o));
+                tempDisplay.setText(String.format("%.1f °C", newSeries.temp));
+                presDisplay.setText(String.format("%.1f kPa", newSeries.pres));
 
             }
         });

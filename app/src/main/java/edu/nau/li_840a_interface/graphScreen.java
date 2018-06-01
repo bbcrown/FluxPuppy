@@ -99,7 +99,7 @@ public class graphScreen extends AppCompatActivity {
 
         textIds[4] = findViewById(R.id.sitedisplay);
         textIds[5] = findViewById(R.id.sampledisplay);
-        //textIds[6] = findViewById(R.id.devicedisplay);
+        textIds[6] = findViewById(R.id.instrumnetdisplay);
 
         Intent intent = getIntent();
         Bundle bd = intent.getExtras();
@@ -455,6 +455,7 @@ public class graphScreen extends AppCompatActivity {
     {
 
         String reading;
+        String metaInstrument;
         String metaSite;
         String metaOpName;
         String metaSampleId;
@@ -489,6 +490,7 @@ public class graphScreen extends AppCompatActivity {
         reading = manager.toString();
 
         // Fetch the metadata values
+        metaInstrument = manager.instrument;
         metaSite = getIntent().getStringExtra("SITE_NAME");
         metaOpName = getIntent().getStringExtra("OPERATOR_NAME");
         metaSampleId = getIntent().getStringExtra("SAMPLE_ID");
@@ -525,11 +527,11 @@ public class graphScreen extends AppCompatActivity {
         }
 
         // Construct the CSV file content
-        metaString = "Operator Name,Site Name,Sample ID,Temperature,Comments,Time and Date,Longitude," +
-                     "Latitude,Elevation,R Squared,Regression Slope,Standard Error,X Start Range,X End Range\n" +
-                     metaOpName + "," + metaSite + "," + metaSampleId + "," + metaTemp + "," +
+        metaString = "Instrument,Operator Name,Site Name,Sample ID,Temperature,Comments,Time and Date,Longitude," +
+                     "Latitude,Elevation,R Squared,Regression Slope,Standard Error,X Start Range,X End Range,AppVersion\n" +
+                     metaInstrument + "," +metaOpName + "," + metaSite + "," + metaSampleId + "," + metaTemp + "," +
                      metaComments + "," + metaTime + "," + metaLong + "," + metaLat + "," +
-                     metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," + df.format(firstSecond) + "," + df.format(lastSecond);
+                     metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," + df.format(firstSecond) + "," + df.format(lastSecond) + "," + getString(R.string.version_name);
 
 
         // Build the file name using the site name, sample id, and time stamp

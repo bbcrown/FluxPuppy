@@ -190,13 +190,14 @@ public class LineGraph
         double difference;
         double max;
         double min;
+        double shift;
 
         // If the graph is static, and not dynamic, do not add the point
         if (graphType.equals("static"))
         {
             return;
         }
-
+        shift=time-series.getHighestValueX();
         // Add the point to the series
         series.appendData(new DataPoint(time, value), false, MAX_DATA_POINTS);
 
@@ -234,8 +235,10 @@ public class LineGraph
             // Update the viewport to show the new maximum time
             graph.getViewport().setMaxX(time);
         }
-
-
+        else {
+            graph.getViewport().setMinX(graph.getViewport().getMinX(false)+shift);
+            graph.getViewport().setMaxX(graph.getViewport().getMaxX(false)+shift);
+        }
     }
 
     /*
