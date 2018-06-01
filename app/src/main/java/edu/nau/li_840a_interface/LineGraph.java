@@ -206,7 +206,7 @@ public class LineGraph
         lowest = series.getLowestValueY();
         highest = series.getHighestValueY();
         difference = highest - lowest;
-        if (difference==0) difference=1;
+
         // Only execute the following code if the graph is not currently zoomable
         if (!zoomable)
         {
@@ -231,10 +231,10 @@ public class LineGraph
             graph.getViewport().setMinY(min);
             graph.getViewport().setMaxY(max);
 
-
+            // Update the viewport to show the new maximum time
+            graph.getViewport().setMaxX(time);
         }
-        // Update the viewport to show the new maximum time
-        graph.getViewport().setMaxX(time);
+
 
     }
 
