@@ -39,12 +39,13 @@ public class GraphManager implements Runnable
     private boolean running;
     private boolean logging;
     private String lastData;
+    private boolean newDataAvailable;
     public String instrument;
 
     ///////////////
     // CONSTANTS //
     ///////////////
-    private static final int SLEEP_TIME = 1000;
+    private static final int SLEEP_TIME = 200;
 
 
     /*
@@ -124,20 +125,24 @@ public class GraphManager implements Runnable
         // Loops until the screen is deconstructed
         while (running)
         {
+            // Use only new data...
+            if (newDataAvailable) {
+                // Get the latest data from the instrument
+                data = this.getData();
 
-            // Get the latest data from the instrument
-            data = this.getData();
+                // Get the current time
+                time = new Date();
+                currentTime = time.getTime();
 
-            // Get the current time
-            time = new Date();
-            currentTime = time.getTime();
+                // Calculate the time difference between when the screen started
+                timeDiff = currentTime - startTime;
 
-            // Calculate the time difference between when the screen started
-            timeDiff = currentTime - startTime;
+                // Add the points to the graphs
+                this.addPoints(data, timeDiff);
 
-            // Add the points to the graphs
-            this.addPoints(data, timeDiff);
-
+                // flag data as recorded
+                newDataAvailable = false;
+            }
             // Wait the specified wait time
             try
             {
@@ -159,6 +164,7 @@ public class GraphManager implements Runnable
     public void updateData(String data)
     {
         lastData = data;
+        newDataAvailable=true;
     }
 
     ////////////////////
