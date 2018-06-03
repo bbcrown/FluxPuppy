@@ -11,6 +11,9 @@ package edu.nau.li_840a_interface;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import java.util.ArrayList;
@@ -35,12 +38,16 @@ public class GraphManager implements Runnable
     private TextView tempDisplay;
     private TextView presDisplay;
     private TextView instrumentDisplay;
+    private TextView finalbutton;
     private long startTime;
+    private long endTime;
     private boolean running;
     private boolean logging;
     private String lastData;
     private boolean newDataAvailable;
     public String instrument;
+    private String countdown;
+    public boolean countdownNotified;
 
     ///////////////
     // CONSTANTS //
@@ -65,13 +72,13 @@ public class GraphManager implements Runnable
         dataArray = new ArrayList<DataSeries>();
 
         // Initialize all of the graphs
-        co2Graph = new LineGraph(graphIds[0], "CO2", "Time", "CO2",
+        co2Graph = new LineGraph(graphIds[0], "CO2", "Time", "CO2 (ppm)",
                 Color.argb(255, 0, 0, 0));
-        h2oGraph = new LineGraph(graphIds[1], "H2O", "Time", "H2O",
+        h2oGraph = new LineGraph(graphIds[1], "H2O", "Time", "H2O (ppt)",
                 Color.argb(255, 0, 0, 255));
-        tempGraph = new LineGraph(graphIds[2], "Temperature", "Time", "Temperature",
+        tempGraph = new LineGraph(graphIds[2], "Temperature", "Time", "Temperature (°C)",
                 Color.argb(255, 255, 0, 0));
-        presGraph = new LineGraph(graphIds[3], "Pressure", "Time", "Pressure",
+        presGraph = new LineGraph(graphIds[3], "Pressure", "Time", "Pressure (kPa)",
                 Color.argb(255, 0, 125, 0));
 
         // Get the IDs for the text views used to display the data values
@@ -80,6 +87,7 @@ public class GraphManager implements Runnable
         tempDisplay = textIds[2];
         presDisplay = textIds[3];
         instrumentDisplay = textIds[6];
+        finalbutton = textIds[7];
 
         // Get the start time
         time = new Date();
@@ -112,7 +120,8 @@ public class GraphManager implements Runnable
             data = this.getData();
         }
 
-        try { instrument = data.split("><",2)[0].substring(1).toUpperCase();
+        try { instrument = data.substring(data.lastIndexOf('/') + 1).toUpperCase(); // Use the last element in datastring, not the first
+              instrument = instrument.substring(0, instrument.length() - 1); // seems to be more stable if incomplete strings are received.
         } catch (Exception exception) { instrument="unknown";}
         activity.runOnUiThread(new Runnable() {
             public void run() {
@@ -125,7 +134,7 @@ public class GraphManager implements Runnable
         // Loops until the screen is deconstructed
         while (running)
         {
-            // Use only new data...
+            // The following section is runs every time soon after new data is available, (depending on the settings of the LICOR, default 0.5s and SLEEP_TIME)
             if (newDataAvailable) {
                 // Get the latest data from the instrument
                 data = this.getData();
@@ -143,6 +152,37 @@ public class GraphManager implements Runnable
                 // flag data as recorded
                 newDataAvailable = false;
             }
+
+                if (logging) {
+                    // Calculate the remaining time
+                    time = new Date();
+                    currentTime = time.getTime();
+                    timeDiff = endTime - currentTime;
+                    if (timeDiff<0 & !countdownNotified) {
+                        //Notification when countdown reaches zero
+                        activity.runOnUiThread(new Runnable() {
+                            public void run() {
+                                finalbutton.setTextColor(Color.RED);
+                            }
+                        });
+                        countdownNotified=true;
+
+                        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        Ringtone r = RingtoneManager.getRingtone(activity, notification);
+                        r.play();
+                    }
+                    if (timeDiff<0){
+                        countdown = String.format("-%d:%02d", Math.abs(timeDiff / (60 * 1000) % 60), Math.abs(timeDiff / 1000 % 60));
+                    } else {
+                        countdown = String.format("%d:%02d", timeDiff / (60 * 1000) % 60, timeDiff / 1000 % 60);
+                    }
+                    activity.runOnUiThread(new Runnable() {
+                        public void run() {
+                            finalbutton.setText(countdown);
+                        }
+                    });
+                }
+
             // Wait the specified wait time
             try
             {
@@ -186,7 +226,7 @@ public class GraphManager implements Runnable
      *  Runs when the "Start Log" button is clicked. Initializes the data log, and toggles the
      *  variable which specifies if we should be saving points.
      */
-    public void startlogging()
+    public void startlogging(int duration)
     {
 
         //Date time;
@@ -201,6 +241,10 @@ public class GraphManager implements Runnable
         // Reset the time
         //time = new Date();
        // startTime = time.getTime();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MILLISECOND, duration);
+        endTime = calendar.getTimeInMillis();
 
         //resetGraphs();
 

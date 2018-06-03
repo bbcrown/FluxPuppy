@@ -23,8 +23,11 @@ import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +58,10 @@ public class graphScreen extends AppCompatActivity {
     public static int device_connection=NOT_CONNECTED; // Is a Sensor connected?
     public static boolean bt_established=false;
     public static int SELECT_BT_DEVICE = 1;  // Intent_response id
+    // COUNTDOWN TIMER
+    public static int logduration=300000;//ms; default setting
+    public static String countdown_label;
+    public static  boolean loggingstopped =false;
 
     /*
      *  Constructor for the graph screen. Fetches the screen IDs for the graphs and text boxes, and
@@ -91,7 +98,7 @@ public class graphScreen extends AppCompatActivity {
         graphIds[3] = findViewById(R.id.graph4);
 
         // Get the screen IDs for each of the four text views
-        textIds = new TextView[7];
+        textIds = new TextView[8];
         textIds[0] = findViewById(R.id.co2display);
         textIds[1] = findViewById(R.id.h2odisplay);
         textIds[2] = findViewById(R.id.tempdisplay);
@@ -100,6 +107,7 @@ public class graphScreen extends AppCompatActivity {
         textIds[4] = findViewById(R.id.sitedisplay);
         textIds[5] = findViewById(R.id.sampledisplay);
         textIds[6] = findViewById(R.id.instrumentdisplay);
+        textIds[7] = findViewById(R.id.finalbutton);
 
         Intent intent = getIntent();
         Bundle bd = intent.getExtras();
@@ -110,6 +118,8 @@ public class graphScreen extends AppCompatActivity {
             getName = (String) bd.get("SAMPLE_ID");
             textIds[5].setText(getName);
         }
+        countdown_label= String.format("Log duration\n%d:%02d", logduration/ (60 * 1000) % 60, logduration / 1000 % 60);
+        textIds[7].setText(countdown_label);
 
         // Initialize the handler. This is used for the USB/BT serial communication
         // Bluetooth and USB support... we cativate both services and switch between them ... the unused one will just be be idling in background
@@ -324,8 +334,11 @@ public class graphScreen extends AppCompatActivity {
                         button.setText("Stop Logging");
                         finalizeButton.setBackgroundColor(Color.TRANSPARENT);
                         finalizeButton.setEnabled(false);
+                        finalizeButton.setTextSize(24);
+                        finalizeButton.setTextColor(0xff99cc00);
                         manager.resetGraphs();
-                        manager.startlogging();
+                        manager.startlogging(logduration);
+                        manager.countdownNotified=false;
 
                     }
                 });
@@ -347,8 +360,11 @@ public class graphScreen extends AppCompatActivity {
                 button.setText("Stop Logging");
                 finalizeButton.setBackgroundColor(Color.TRANSPARENT);
                 finalizeButton.setEnabled(false);
+                finalizeButton.setTextSize(24);
+                finalizeButton.setTextColor(0xff99cc00);
+
                 manager.resetGraphs();
-                manager.startlogging();
+                manager.startlogging(logduration);
             }
 
         }
@@ -361,6 +377,10 @@ public class graphScreen extends AppCompatActivity {
             {
                 finalizeButton.setBackgroundResource(android.R.drawable.btn_default);
                 finalizeButton.setEnabled(true);
+                finalizeButton.setText("Save and Exit");
+                finalizeButton.setTextSize(14);
+                finalizeButton.setTextColor(button.getCurrentTextColor());
+                loggingstopped=true;
             }
             manager.stoplogging();
         }
@@ -446,6 +466,11 @@ public class graphScreen extends AppCompatActivity {
         builder.show();
     }
 
+    public void update_countdown(long remainingtime){
+        countdown_label= String.format("%d:%02d", remainingtime/ (60 * 1000) % 60, remainingtime / 1000 % 60);
+        textIds[7].setText(countdown_label);
+    }
+
     /*
      *  Runs when the "Finalize" button is pressed. Gets the string values for the graph file,
      *  metadata file, and image file, writes them to files, deconstructs the graph manager, and
@@ -453,6 +478,42 @@ public class graphScreen extends AppCompatActivity {
      */
     public void finalize(View view)
     {
+    if (!loggingstopped ) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Log duration");
+        alert.setMessage("Intended log duration (in seconds):");
+
+        // Set an EditText view to get user input
+        final EditText seconds = new EditText(this);
+        seconds.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+        seconds.setMaxLines(1);
+        seconds.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        alert.setView(seconds);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = seconds.getText().toString();
+                if (!value.equals("")) {
+                    logduration = Integer.parseInt(value) * 1000;
+                }
+                countdown_label = String.format("%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
+                textIds[7].setText(countdown_label);
+                return;
+            }
+        });
+
+        alert.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        return;
+                    }
+                });
+        alert.show();
+
+     return;
+    }
+        loggingstopped=false;
 
         String reading;
         String metaInstrument;
