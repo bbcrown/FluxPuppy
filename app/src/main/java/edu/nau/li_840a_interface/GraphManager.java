@@ -11,9 +11,7 @@ package edu.nau.li_840a_interface;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.media.MediaPlayer;
 import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import java.util.ArrayList;
@@ -167,9 +165,8 @@ public class GraphManager implements Runnable
                         });
                         countdownNotified=true;
 
-                        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        Ringtone r = RingtoneManager.getRingtone(activity, notification);
-                        r.play();
+                        MediaPlayer ring= MediaPlayer.create(activity,R.raw.smalldogbarking);
+                        ring.start();
                     }
                     if (timeDiff<0){
                         countdown = String.format("-%d:%02d", Math.abs(timeDiff / (60 * 1000) % 60), Math.abs(timeDiff / 1000 % 60));
