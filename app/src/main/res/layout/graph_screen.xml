@@ -30,7 +30,7 @@
             android:text="Sample" />
 
         <TextView
-            android:id="@+id/instrumnetdisplay"
+            android:id="@+id/instrumentdisplay"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
@@ -208,13 +208,13 @@
 
             <Button
                 android:id="@+id/finalbutton"
-                android:enabled="false"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
+                android:enabled="true"
                 android:onClick="finalize"
-                android:text="Save and Exit"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="Save and Exit" />
 
         </LinearLayout>
 
