@@ -381,6 +381,14 @@ public class graphScreen extends AppCompatActivity {
                 finalizeButton.setTextSize(14);
                 finalizeButton.setTextColor(button.getCurrentTextColor());
                 loggingstopped=true;
+            } else {
+                countdown_label= String.format("Log duration\n%d:%02d", logduration/ (60 * 1000) % 60, logduration / 1000 % 60);
+                finalizeButton.setBackgroundResource(android.R.drawable.btn_default);
+                finalizeButton.setEnabled(true);
+                finalizeButton.setText(countdown_label);
+                finalizeButton.setTextSize(14);
+                finalizeButton.setTextColor(button.getCurrentTextColor());
+                loggingstopped=true;
             }
             manager.stoplogging();
         }
@@ -464,11 +472,6 @@ public class graphScreen extends AppCompatActivity {
 
         // Show the alert box
         builder.show();
-    }
-
-    public void update_countdown(long remainingtime){
-        countdown_label= String.format("%d:%02d", remainingtime/ (60 * 1000) % 60, remainingtime / 1000 % 60);
-        textIds[7].setText(countdown_label);
     }
 
     /*
@@ -797,43 +800,7 @@ public class graphScreen extends AppCompatActivity {
         registerReceiver(sensorReceiver, filter);
     }
 
-    /*
-     * This handler will be passed to UsbService or BTService. Data received from serial port is displayed through this handler
-     */
-/*
-    private static class MyHandler extends Handler {
-        private final WeakReference<graphScreen> mActivity;
 
-        public MyHandler(graphScreen activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (device_connection == BLUETOOTH) {
-                switch (msg.what) {
-                    case BTService.MESSAGE_FROM_SERIAL_PORT:
-                        String data = (String) msg.obj;
-                        mActivity.get().reader.addChar(data);
-                        break;
-                }
-            } else if (device_connection == USB)  {
-                switch (msg.what) {
-                    case UsbService.MESSAGE_FROM_SERIAL_PORT:
-                        String data = (String) msg.obj;
-                        mActivity.get().reader.addChar(data);
-                        break;
-                    case UsbService.CTS_CHANGE:
-                        Toast.makeText(mActivity.get(), "CTS_CHANGE", Toast.LENGTH_LONG).show();
-                        break;
-                    case UsbService.DSR_CHANGE:
-                        Toast.makeText(mActivity.get(), "DSR_CHANGE", Toast.LENGTH_LONG).show();
-                        break;
-                }
-            }
-        }
-    }
-*/
     private static class MyBTHandler extends Handler {
         private final WeakReference<graphScreen> mActivity;
         public MyBTHandler(graphScreen activity) {
