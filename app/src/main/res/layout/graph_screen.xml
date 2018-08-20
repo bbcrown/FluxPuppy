@@ -6,6 +6,17 @@
     tools:context="edu.nau.li_840a_interface.graphScreen"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/warningdisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.05"
+        android:gravity="center"
+        android:textAllCaps="true"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="24sp"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -15,6 +26,7 @@
             android:id="@+id/sitedisplay"
             android:layout_width="0dip"
             android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
             android:layout_weight="0.25"
             android:gravity="center_vertical"
             android:text="Site"
@@ -47,6 +59,7 @@
             android:onClick="connectDeviceToggle"
             android:textSize="10sp"
             android:text="Connect" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -87,8 +100,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="0.2"
+            android:layout_height="36dip"
             android:orientation="horizontal">
 
             <TextView
@@ -134,42 +146,45 @@
             android:layout_height="0dip"
             android:layout_weight="0.4"
             android:orientation="horizontal">
-
             <Button
                 android:id="@+id/co2button"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
                 android:onClick="showCO2"
-                android:text="CO2"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="CO2" />
 
             <Button
                 android:id="@+id/h2obutton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
                 android:onClick="showH2O"
-                android:text="H20"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="H20" />
 
             <Button
                 android:id="@+id/tempbutton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
                 android:onClick="showTemp"
-                android:text="Temp"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="Temp" />
 
             <Button
                 android:id="@+id/presbutton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
                 android:onClick="showPres"
-                android:text="Pressure"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="Pressure" />
 
         </LinearLayout>
 
@@ -184,27 +199,27 @@
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
                 android:onClick="goToMetadata"
-                android:text="Back"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="Back" />
 
             <Button
                 android:id="@+id/zooombutton"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
                 android:onClick="zoomToggle"
-                android:text="Enable Zoom"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="Enable Zoom" />
 
             <Button
                 android:id="@+id/logbutton"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
+                android:background="@android:drawable/btn_default"
                 android:onClick="startStopLog"
-                android:text="Start Logging"
-                android:background = "@android:drawable/btn_default"/>
+                android:text="Start Logging" />
 
             <Button
                 android:id="@+id/finalbutton"

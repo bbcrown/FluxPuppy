@@ -23,14 +23,12 @@ public class BTService extends Service{
 
     public static boolean SERVICE_CONNECTED = false;
     private Handler bluetoothIn;
-    private IBinder binder = new BTBinder();
+    private final IBinder binder = new BTBinder();
     private Context context;
     public static final int MESSAGE_FROM_SERIAL_PORT = 0;                        //used to identify handler message
 
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
-
-    private ConnectedThread mConnectedThread;
 
     // SPP UUID service - this should work for most devices
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -81,7 +79,7 @@ public class BTService extends Service{
         this.bluetoothIn = mHandler;
     }
 
-    public void BTdisconnect() {
+    private void BTdisconnect() {
         try
         {
             btSocket.close(); //Don't leave Bluetooth sockets open when leaving activity
@@ -115,7 +113,7 @@ public class BTService extends Service{
                 context.sendBroadcast(intent);
             }
         }
-        mConnectedThread = new ConnectedThread(btSocket);
+        ConnectedThread mConnectedThread = new ConnectedThread(btSocket);
         mConnectedThread.start();
 
         //I send a character when resuming.beginning transmission to check device is connected
@@ -139,7 +137,7 @@ public class BTService extends Service{
             private final OutputStream mmOutStream;
 
             //creation of the connect thread
-            public ConnectedThread(BluetoothSocket socket) {
+            ConnectedThread(BluetoothSocket socket) {
                 InputStream tmpIn = null;
                 OutputStream tmpOut = null;
                 try {
@@ -171,7 +169,7 @@ public class BTService extends Service{
 
             //write method (Not Actively used in this application.... merely as a test if connection is established and initial setting of the refresh rate...
             // That said, the command <li840>?</li840> would yield a long list of configuration parameters of the device
-            public void write(String input) {
+            void write(String input) {
                 byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
                 try {
                     mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream

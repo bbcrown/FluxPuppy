@@ -12,40 +12,49 @@ package edu.nau.li_840a_interface;
 import android.app.Activity;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.view.View;
 import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
-import java.util.ArrayList;
-import java.util.Date;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class GraphManager implements Runnable
+class GraphManager implements Runnable
 {
 
     ////////////////////////////
     // CLASS MEMBER VARIABLES //
     ////////////////////////////
     private ArrayList<DataSeries> dataArray;
-    private Activity activity;
-    private LineGraph co2Graph;
-    private LineGraph h2oGraph;
-    private LineGraph tempGraph;
-    private LineGraph presGraph;
-    private TextView co2Display;
-    private TextView h2oDisplay;
-    private TextView tempDisplay;
-    private TextView presDisplay;
-    private TextView instrumentDisplay;
-    private TextView finalbutton;
+    private final Activity activity;
+    private final LineGraph co2Graph;
+    private final LineGraph h2oGraph;
+    private final LineGraph tempGraph;
+    private final LineGraph presGraph;
+    private final TextView co2Display;
+    private final TextView h2oDisplay;
+    private final TextView tempDisplay;
+    private final TextView presDisplay;
+    private final TextView instrumentDisplay;
+    private final TextView finalbutton;
+    private final TextView warnDisplay;
+    private String warnString;
     private long startTime;
     private long endTime;
+    public String startTimeFormatted;
     private boolean running;
     private boolean logging;
+    private boolean waslogging;
     private String lastData;
     private boolean newDataAvailable;
     public String instrument;
     private String countdown;
     public boolean countdownNotified;
+
 
     ///////////////
     // CONSTANTS //
@@ -67,7 +76,7 @@ public class GraphManager implements Runnable
         this.activity = activity;
 
         // Initialize our array of readings
-        dataArray = new ArrayList<DataSeries>();
+        dataArray = new ArrayList<>();
 
         // Initialize all of the graphs
         co2Graph = new LineGraph(graphIds[0], "CO2", "Time", "CO2 (ppm)",
@@ -86,6 +95,7 @@ public class GraphManager implements Runnable
         presDisplay = textIds[3];
         instrumentDisplay = textIds[6];
         finalbutton = textIds[7];
+        warnDisplay = textIds[8];
 
         // Get the start time
         time = new Date();
@@ -96,6 +106,12 @@ public class GraphManager implements Runnable
 
         // Assume we are not logging a subset at the start
         logging = false;
+        waslogging = false;
+
+        // Initiate the timer for the reminder
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MILLISECOND, 30 * 1000);
+        endTime = calendar.getTimeInMillis();
 
     }
 
@@ -118,6 +134,12 @@ public class GraphManager implements Runnable
             data = this.getData();
         }
 
+        // In case the instrument is just connected, there might be some gibberish in the data buffer... we drop the first string and use the second one to identify instrument (and fields in future versions)
+        while (!(data.substring(0,1).equals("<"))){     // Wait for the first data to arrive to get instrument
+            try { Thread.sleep(SLEEP_TIME); } catch (Exception exception) {}
+            data = this.getData();
+        }
+
         try { instrument = data.substring(data.lastIndexOf('/') + 1).toUpperCase(); // Use the last element in datastring, not the first
               instrument = instrument.substring(0, instrument.length() - 1); // seems to be more stable if incomplete strings are received.
         } catch (Exception exception) { instrument="unknown";}
@@ -127,7 +149,6 @@ public class GraphManager implements Runnable
             }
         });
         // END GET INSTRUMENT
-
 
         // Loops until the screen is deconstructed
         while (running)
@@ -164,7 +185,6 @@ public class GraphManager implements Runnable
                             }
                         });
                         countdownNotified=true;
-
                         MediaPlayer ring= MediaPlayer.create(activity,R.raw.smalldogbarking);
                         ring.start();
                     }
@@ -178,6 +198,27 @@ public class GraphManager implements Runnable
                             finalbutton.setText(countdown);
                         }
                     });
+                } else{
+                    if (!waslogging){
+                        // Add a reminder if logging is not started for 30 sec....
+                        time = new Date();
+                        currentTime = time.getTime();
+                        timeDiff = endTime - currentTime;
+                        if (timeDiff<0) {
+                            //PLAY SOUND
+                            try {
+                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(activity, notification);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.add(Calendar.MILLISECOND, 30 * 1000);
+                            endTime = calendar.getTimeInMillis(); // Reset Timer for the next 30 sec
+                        }
+                    }
+
                 }
 
             // Wait the specified wait time
@@ -226,24 +267,26 @@ public class GraphManager implements Runnable
     public void startlogging(int duration)
     {
 
-        //Date time;
-
         // Clear the log of any previously saved data points
-        dataArray = new ArrayList<DataSeries>();
-
+        dataArray = new ArrayList<>();
 
         // Signal that we should be adding points to the log
         logging = true;
+        waslogging = true;
 
         // Reset the time
-        //time = new Date();
-       // startTime = time.getTime();
+        Date time;
+        time = new Date();
+        startTime = time.getTime();
+        DateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        startTimeFormatted = dateAndTimeFormat.format(startTime);
 
+        // Calculate the end of the logging period
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MILLISECOND, duration);
         endTime = calendar.getTimeInMillis();
 
-        //resetGraphs();
+        resetGraphs();
 
     }
 
@@ -315,25 +358,25 @@ public class GraphManager implements Runnable
     public String toString()
     {
 
-        String output;
+        StringBuilder output;
 
         // Initialize the output string
-        output = "";
+        output = new StringBuilder();
 
         // Add the CSV header
-        output += "Year,Month,Day,Hour,Minute,Second,RunTime,CO2,H2O,Temperature,Pressure\n";
+        output.append("Year,Month,Day,Hour,Minute,Second,RunTime,CO2,H2O,Temperature,Pressure\n");
 
         // Loop through each data series in the data array
         for (DataSeries series : dataArray)
         {
 
             // Append the series string and add a line break
-            output += series.toString() + "\n";
+            output.append(series.toString()).append("\n");
 
         }
 
         // Return the final output string
-        return output;
+        return output.toString();
 
     }
 
@@ -387,10 +430,20 @@ public class GraphManager implements Runnable
                 presGraph.addPoint(newSeries.pres, newSeries.time);
 
                 // Update each text view with the data series
+
                 co2Display.setText(String.format("%.1f ppm", newSeries.co2));
                 h2oDisplay.setText(String.format("%.3f ppt", newSeries.h2o));
                 tempDisplay.setText(String.format("%.1f °C", newSeries.temp));
                 presDisplay.setText(String.format("%.1f kPa", newSeries.pres));
+                // WARNING when instrument is still warming up or Battery Low
+                if (newSeries.temp < 50.0 | newSeries.volt < 10.6) {
+                    warnString="";
+                    warnDisplay.setVisibility(View.VISIBLE);
+                    if (newSeries.temp < 50.0) { warnString+=instrument + ": warming up, please wait"; }
+                    if (newSeries.temp < 50.0 & newSeries.volt < 10.6) {warnString+='\n'; }
+                    if (newSeries.volt < 10.6) { warnString+= String.format("%s: low Battery warning (%.1f V)",instrument, newSeries.volt); }
+                    warnDisplay.setText(warnString);
+                }else {warnDisplay.setText("");warnDisplay.setVisibility(View.GONE);}
 
             }
         });
@@ -407,21 +460,21 @@ public class GraphManager implements Runnable
     private class DataSeries
     {
 
-        //public long time;
-        public int year;
-        public int month;
-        public int day;
-        public int hour;
-        public int minute;
-        public int second;
+        final int year;
+        final int month;
+        final int day;
+        final int hour;
+        final int minute;
+        final int second;
 
-        public String timeStamp;
+        final String timeStamp;
 
-        public float time;
-        public float co2;
-        public float h2o;
-        public float temp;
-        public float pres;
+        final float time;
+        final float co2;
+        final float h2o;
+        final float temp;
+        final float pres;
+        final float volt;
 
         /*
          *  Constructor for the DataSeries. Takes in the data from the
@@ -429,7 +482,7 @@ public class GraphManager implements Runnable
          *  to their corresponding variables. Also assigns the time of the data
          *  points based off the time parameter.
          */
-        public DataSeries(String data, long time)
+        DataSeries(String data, long time)
         {
 
             float[] parse;
@@ -442,9 +495,10 @@ public class GraphManager implements Runnable
             timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 
             year = Calendar.getInstance().get(Calendar.YEAR);
-            month = Calendar.getInstance().get(Calendar.MONTH);
-            day = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-            hour = Calendar.getInstance().get(Calendar.HOUR);
+            month = Calendar.getInstance().get(Calendar.MONTH)+1; //Months are indexed from 0 not 1
+
+            day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+            hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             minute = Calendar.getInstance().get(Calendar.MINUTE);
             second = Calendar.getInstance().get(Calendar.SECOND);
 
@@ -454,6 +508,7 @@ public class GraphManager implements Runnable
             h2o = parse[1];
             temp = parse[2];
             pres = parse[3];
+            volt = parse[4];
 
         }
 
@@ -471,7 +526,7 @@ public class GraphManager implements Runnable
             float[] output;
 
             // Initialize our array which will hold all the parsed values
-            output = new float[4];
+            output = new float[5];
 
             // Try to parse out the CO2
             try
@@ -512,6 +567,16 @@ public class GraphManager implements Runnable
             {
                 output[3] = (float) 0.0;
             }
+            // Try to parse out the Battery
+            try
+            {
+                output[4] = stringToFloat(data.split("<ivolt>")[1].split("</ivolt>")[0]);
+            }
+            catch(Exception exception)
+            {
+                output[4] = (float) 0.0;
+            }
+
 
             // Return an array of all the parsed values
             return output;
@@ -528,11 +593,11 @@ public class GraphManager implements Runnable
 
             int count;
             float number;
-            int exponent;
-
+            int exponent=0;
             // Parse out the number, and the exponent
             number = Float.parseFloat(input.split("e")[0]);
-            exponent = Integer.parseInt(input.split("e")[1]);
+            if (input.split("e").length>1) // Generalized to work also for non-scientific notation
+                exponent = Integer.parseInt(input.split("e")[1]);
 
             // Multiply the number by the exponent
             for (count = 0; count < exponent; count++)
