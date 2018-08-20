@@ -47,21 +47,20 @@ public class graphScreen extends AppCompatActivity {
     private GraphView graphIds[];
     private TextView textIds[];
     private GraphManager manager;
-    private Thread manager_thread;
     private SerialReader reader;
 
     // CONNECTION CONSTANTS
-    public static int NOT_CONNECTED = 0;  // Where?
-    public static int USB = 1;  // Where?
-    public static int BLUETOOTH = 2;  // Where?
+    private static final int NOT_CONNECTED = 0;  // Where?
+    private static final int USB = 1;  // Where?
+    private static final int BLUETOOTH = 2;  // Where?
     // CONNECTION STATUS
-    public static int device_connection=NOT_CONNECTED; // Is a Sensor connected?
-    public static boolean bt_established=false;
-    public static int SELECT_BT_DEVICE = 1;  // Intent_response id
+    private static int device_connection=NOT_CONNECTED; // Is a Sensor connected?
+    private static boolean bt_established=false;
+    private static final int SELECT_BT_DEVICE = 1;  // Intent_response id
     // COUNTDOWN TIMER
-    public static int logduration=300000;//ms; default setting
-    public static String countdown_label;
-    public static  boolean loggingstopped =false;
+    private static int logduration=300000;//ms; default setting
+    private static String countdown_label;
+    private static  boolean loggingstopped =false;
 
     /*
      *  Constructor for the graph screen. Fetches the screen IDs for the graphs and text boxes, and
@@ -98,16 +97,18 @@ public class graphScreen extends AppCompatActivity {
         graphIds[3] = findViewById(R.id.graph4);
 
         // Get the screen IDs for each of the four text views
-        textIds = new TextView[8];
+        textIds = new TextView[9];
         textIds[0] = findViewById(R.id.co2display);
         textIds[1] = findViewById(R.id.h2odisplay);
         textIds[2] = findViewById(R.id.tempdisplay);
         textIds[3] = findViewById(R.id.presdisplay);
 
+
         textIds[4] = findViewById(R.id.sitedisplay);
         textIds[5] = findViewById(R.id.sampledisplay);
         textIds[6] = findViewById(R.id.instrumentdisplay);
         textIds[7] = findViewById(R.id.finalbutton);
+        textIds[8] = findViewById(R.id.warningdisplay);
 
         Intent intent = getIntent();
         Bundle bd = intent.getExtras();
@@ -132,7 +133,7 @@ public class graphScreen extends AppCompatActivity {
         // Initialize a new graph manager using the graph and text IDs, and then set it to start
         // updating on its own thread
         manager = new GraphManager(this, graphIds, textIds);
-        manager_thread = new Thread(manager);
+        Thread manager_thread = new Thread(manager);
         manager_thread.start();
         // We need initial user input to find the sensors on USB or BLUETOOTH
         if (device_connection==NOT_CONNECTED) {connectDevice();}else { setConnected(device_connection);}
@@ -151,14 +152,14 @@ public class graphScreen extends AppCompatActivity {
         }
     }
 
-    public void setNotConnected(){
+    private void setNotConnected(){
         final Button button = findViewById(R.id.connectbutton);
         button.setText("Connect");
         device_connection=NOT_CONNECTED;
         bt_established=false;
     }
 
-    public void setConnected(int connection){
+    private void setConnected(int connection){
         final Button button = findViewById(R.id.connectbutton);
         if (connection==BLUETOOTH){
             button.setText("Disconnect Bluetooth");
@@ -171,7 +172,7 @@ public class graphScreen extends AppCompatActivity {
         }
     }
 
-    public void connectDevice() {
+    private void connectDevice() {
         // Let's find out some properties of the Android device...
         // for now let's just assume the Android device supports USB and Bluetooth, it throws an error later if not supported
         final Context  con=this;
@@ -445,7 +446,9 @@ public class graphScreen extends AppCompatActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                // Stop manager
+                manager.stoplogging();
+                manager.deconstruct();
                 // Initialize the meta data screen
                 Intent metaDataScreen;
                 metaDataScreen = new Intent(con, metaData.class);
@@ -501,7 +504,6 @@ public class graphScreen extends AppCompatActivity {
                 }
                 countdown_label = String.format("%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
                 textIds[7].setText(countdown_label);
-                return;
             }
         });
 
@@ -509,7 +511,6 @@ public class graphScreen extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Auto-generated method stub
-                        return;
                     }
                 });
         alert.show();
@@ -544,6 +545,8 @@ public class graphScreen extends AppCompatActivity {
         // Set the button text to "Saving..."
         Button button = findViewById(R.id.finalbutton);
         button.setText("Saving...");
+        // Get the actual startTime from the manager
+        metaTime=manager.startTimeFormatted;
 
         // Deconstruct the manager
         manager.stoplogging();
@@ -560,7 +563,7 @@ public class graphScreen extends AppCompatActivity {
         metaSampleId = getIntent().getStringExtra("SAMPLE_ID");
         metaTemp = getIntent().getStringExtra("TEMPERATURE");
         metaComments = getIntent().getStringExtra("COMMENTS");
-        metaTime = getIntent().getStringExtra("TIME");
+        //metaTime = getIntent().getStringExtra("TIME"); // NOt Used anymore
         metaLong = getIntent().getStringExtra("GPSLong");
         metaLat = getIntent().getStringExtra("GPSLat");
         metaElevation = getIntent().getStringExtra("ELEVATION");
@@ -578,9 +581,8 @@ public class graphScreen extends AppCompatActivity {
         try
         {
 
-            firstSecond = getXRangeStart(graphArray[0]);
+            firstSecond = getXRangeStart(graphArray[0]);  // we now reset the counter when logging starts
             lastSecond = getXRangeEnd(graphArray[0]);
-
         }
         catch (Exception e)
         {
@@ -803,7 +805,7 @@ public class graphScreen extends AppCompatActivity {
 
     private static class MyBTHandler extends Handler {
         private final WeakReference<graphScreen> mActivity;
-        public MyBTHandler(graphScreen activity) {
+        MyBTHandler(graphScreen activity) {
             mActivity = new WeakReference<>(activity);
         }
         @Override
@@ -821,7 +823,7 @@ public class graphScreen extends AppCompatActivity {
 
     private static class MyUSBHandler extends Handler {
         private final WeakReference<graphScreen> mActivity;
-        public MyUSBHandler(graphScreen activity) {
+        MyUSBHandler(graphScreen activity) {
             mActivity = new WeakReference<>(activity);
         }
         @Override
@@ -859,14 +861,14 @@ public class graphScreen extends AppCompatActivity {
     private class SerialReader
     {
 
-        public String currentStream;
-        public String completeStream;
-        public boolean communicating;
+        String currentStream;
+        String completeStream;
+        boolean communicating;
 
         /*
          *  Constructor for the serial reader. Initializes all the class member variables.
          */
-        public SerialReader()
+        SerialReader()
         {
             currentStream = "";
             completeStream = "";
@@ -879,7 +881,7 @@ public class graphScreen extends AppCompatActivity {
          *  built. If the message contains a line break, then we know it is the end of the current
          *  message.
          */
-        public void addChar(String input)
+        void addChar(String input)
         {
 
             // Check to make sure its not a space or empty
@@ -927,16 +929,16 @@ public class graphScreen extends AppCompatActivity {
         String lines[];
         String values[];
         String output[];
-        String co2Points;
-        String h2oPoints;
-        String tempPoints;
-        String presPoints;
+        StringBuilder co2Points;
+        StringBuilder h2oPoints;
+        StringBuilder tempPoints;
+        StringBuilder presPoints;
         int count;
 
-        co2Points = "";
-        h2oPoints = "";
-        tempPoints = "";
-        presPoints = "";
+        co2Points = new StringBuilder();
+        h2oPoints = new StringBuilder();
+        tempPoints = new StringBuilder();
+        presPoints = new StringBuilder();
 
         lines = graphFileContents.split("\n");
 
@@ -944,20 +946,20 @@ public class graphScreen extends AppCompatActivity {
         {
 
             values = lines[count].split(",");
-
-            co2Points += values[0] + "," + values[1] + "\n";
-            h2oPoints += values[0] + "," + values[2] + "\n";
-            tempPoints += values[0] + "," + values[3] + "\n";
-            presPoints += values[0] + "," + values[4] + "\n";
+            //Attention, since the introduction of full date in logfiles, the output is now: 0 year 1 month 2 day 3 hour 4 minute 5 second 6 time 7 co2 7 h2o 9 temp 10 pres
+            co2Points.append(values[6]).append(",").append(values[7]).append("\n");
+            h2oPoints.append(values[6]).append(",").append(values[8]).append("\n");
+            tempPoints.append(values[6]).append(",").append(values[9]).append("\n");
+            presPoints.append(values[6]).append(",").append(values[10]).append("\n");
 
         }
 
         output = new String[4];
 
-        output[0] = co2Points;
-        output[1] = h2oPoints;
-        output[2] = tempPoints;
-        output[3] = presPoints;
+        output[0] = co2Points.toString();
+        output[1] = h2oPoints.toString();
+        output[2] = tempPoints.toString();
+        output[3] = presPoints.toString();
 
         return output;
 
@@ -1052,7 +1054,7 @@ public class graphScreen extends AppCompatActivity {
         double xSquaredTotal = 0;
         double ySquaredTotal = 0;
         double XY = 0;
-        double rSquared = 0;
+        double rSquared;
         String[] data;
         String[] tempData;
         int numOfPoints;
@@ -1095,6 +1097,7 @@ public class graphScreen extends AppCompatActivity {
 
         return rSquared;
     }
+
     private double getXRangeStart(String graphPoints) {
 
         String[] tempData;

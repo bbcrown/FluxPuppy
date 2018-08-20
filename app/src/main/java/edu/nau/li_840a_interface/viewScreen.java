@@ -3,14 +3,11 @@ package edu.nau.li_840a_interface;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,17 +21,11 @@ import com.jjoe64.graphview.GraphView;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.String;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -45,25 +36,20 @@ import static java.lang.Double.NaN;
 
 public class viewScreen extends AppCompatActivity {
 
-    String metaData;
-    String[] metaDataArray;
-    String metaFile;
-    String graphFile;
-    String graphData;
-    String imageFile;
-    String imageData;
-    Double regressionSlope;
-    Double yIntercept;
-    boolean changedValue = false;
+    private String metaData;
+    private String metaFile;
+    private String graphData;
+    private String imageFile;
+    private String imageData;
+    private Double yIntercept;
+    private boolean changedValue = false;
 
     //graph variables
     private GraphView graphIds[];
-    private TextView textIds[];
     private String graphArray[];
 
     private String newGraph;
     private String newMeta;
-    private String newImage;
 
     private LineGraph co2Graph;
     private LineGraph h2oGraph;
@@ -73,7 +59,7 @@ public class viewScreen extends AppCompatActivity {
     private TextView slope;
     private TextView standardError;
     private TextView rSquared;
-    public EditText comments;
+    private EditText comments;
     private String origionalComments;
 
     private String nd_flag;
@@ -83,7 +69,7 @@ public class viewScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        metaDataArray = new String[9];
+        String[] metaDataArray = new String[9];
 
         //set up UI
         super.onCreate(savedInstanceState);
@@ -132,7 +118,7 @@ public class viewScreen extends AppCompatActivity {
         graphIds[3] = findViewById(R.id.graph4);
 
         //graph text views
-        textIds = new TextView[4];
+        TextView[] textIds = new TextView[4];
         textIds[0] = findViewById(R.id.co2display);
         textIds[1] = findViewById(R.id.h2odisplay);
         textIds[2] = findViewById(R.id.tempdisplay);
@@ -158,7 +144,7 @@ public class viewScreen extends AppCompatActivity {
                 line = buffReader.readLine();
             }
 
-            graphFile = getIntent().getStringExtra("GRAPHFILE");
+            String graphFile = getIntent().getStringExtra("GRAPHFILE");
             inputStream = openFileInput(graphFile);
             inputReader = new InputStreamReader(inputStream);
             buffReader = new BufferedReader(inputReader);
@@ -266,7 +252,7 @@ public class viewScreen extends AppCompatActivity {
 
 
         // get regression and y intercept of co2
-        regressionSlope = getRegressionSlope(graphArray[0]);
+        Double regressionSlope = getRegressionSlope(graphArray[0]);
         yIntercept = getYIntercept(graphArray[0]);
 
         // Set up graphs with data
@@ -296,8 +282,6 @@ public class viewScreen extends AppCompatActivity {
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
 
         co2Graph.resetZoom();
-
-
     }
 
     public void showH2O(View view)
@@ -345,16 +329,16 @@ public class viewScreen extends AppCompatActivity {
         String lines[];
         String values[];
         String output[];
-        String co2Points;
-        String h2oPoints;
-        String tempPoints;
-        String presPoints;
+        StringBuilder co2Points;
+        StringBuilder h2oPoints;
+        StringBuilder tempPoints;
+        StringBuilder presPoints;
         int count;
 
-        co2Points = "";
-        h2oPoints = "";
-        tempPoints = "";
-        presPoints = "";
+        co2Points = new StringBuilder();
+        h2oPoints = new StringBuilder();
+        tempPoints = new StringBuilder();
+        presPoints = new StringBuilder();
 
         lines = graphFileContents.split("\n");
 
@@ -363,19 +347,19 @@ public class viewScreen extends AppCompatActivity {
 
             values = lines[count].split(",");
 
-            co2Points += values[6] + "," + values[7] + "\n";
-            h2oPoints += values[6] + "," + values[8] + "\n";
-            tempPoints += values[6] + "," + values[9] + "\n";
-            presPoints += values[6] + "," + values[10] + "\n";
+            co2Points.append(values[6]).append(",").append(values[7]).append("\n");
+            h2oPoints.append(values[6]).append(",").append(values[8]).append("\n");
+            tempPoints.append(values[6]).append(",").append(values[9]).append("\n");
+            presPoints.append(values[6]).append(",").append(values[10]).append("\n");
 
         }
 
         output = new String[4];
 
-        output[0] = co2Points;
-        output[1] = h2oPoints;
-        output[2] = tempPoints;
-        output[3] = presPoints;
+        output[0] = co2Points.toString();
+        output[1] = h2oPoints.toString();
+        output[2] = tempPoints.toString();
+        output[3] = presPoints.toString();
 
         return output;
 
@@ -387,7 +371,7 @@ public class viewScreen extends AppCompatActivity {
         String[] tempData;
         int numOfPoints;
 
-        if (graphPoints == ""){
+        if (graphPoints.equals("")){
             return 0;
         }
 
@@ -420,12 +404,11 @@ public class viewScreen extends AppCompatActivity {
         String[] tempData;
         int numOfPoints;
 
-        if (graphPoints == ""){
+        if (graphPoints.equals("")){
             return 0;
         }
 
         SimpleRegression SR = new SimpleRegression();
-
 
         //split data
         data = graphPoints.split("\n");
@@ -448,7 +431,7 @@ public class viewScreen extends AppCompatActivity {
         String[] tempData;
         int numOfPoints;
 
-        if (graphPoints == ""){
+        if (graphPoints.equals("")){
             return 0;
         }
 
@@ -486,7 +469,6 @@ public class viewScreen extends AppCompatActivity {
 
         firstData = tempData[0].split(",");
         lastData = tempData[tempData.length - 1].split(",");
-
         firstSecond = Float.parseFloat(firstData[0]);
         lastSecond = Float.parseFloat(lastData[0]);
 
@@ -494,17 +476,19 @@ public class viewScreen extends AppCompatActivity {
         // Get the new meta
         newMeta = metaData.split("\n")[0] + "\n";
         reusedValues = metaData.split("\n")[1].split(",");
-
-        for (counter = 0; counter <= 11; counter++)
+        //" 0 Instrument, 1 Operator Name,2 Site Name,3 Sample ID,4 Temperature,5 Comments,6 Time and Date,7 Longitude," +
+        // "8 Latitude,9 Elevation, 10 R Squared, 11 Regression Slope, 12 Standard Error, 13 X Start Range, 14 X End Range, 15 AppVersion\n" +
+        for (counter = 0; counter <= 12; counter++)
         {
             newMeta += reusedValues[counter] + ",";
         }
 
         DecimalFormat df = new DecimalFormat("#0.0000");
 
-
         newMeta += df.format(firstSecond) + ",";
-        newMeta += df.format(lastSecond);
+        newMeta += df.format(lastSecond) + ",";
+        newMeta += reusedValues[15];
+
     }
 
     private double getRSquared(String graphPoints){
@@ -521,7 +505,7 @@ public class viewScreen extends AppCompatActivity {
         double tempX;
         double tempY;
 
-        if (graphPoints == ""){
+        if (graphPoints.equals("")){
             return 0.0;
         }
 
@@ -575,7 +559,7 @@ public class viewScreen extends AppCompatActivity {
         // check if there was an update
         updateOrigMetaComments();
 
-        newComments = metaData.split("\n")[1].split(",")[4];
+        newComments = metaData.split("\n")[1].split(",")[5];
 
         //if comments are changed and they exit
         if (!newComments.equals(origionalComments)) {
@@ -595,7 +579,6 @@ public class viewScreen extends AppCompatActivity {
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    return;
                 }
             });
 
@@ -610,7 +593,7 @@ public class viewScreen extends AppCompatActivity {
 
             }
             //if subgraph applied and they try to exit
-        } else if( changedValue == true) {
+        } else if(changedValue) {
             AlertDialog.Builder builder;
             builder = new AlertDialog.Builder(this);
             builder.setTitle("Do not save subgraph?");
@@ -627,7 +610,6 @@ public class viewScreen extends AppCompatActivity {
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    return;
                 }
             });
 
@@ -638,7 +620,7 @@ public class viewScreen extends AppCompatActivity {
         }
     }
 
-    public void goToFD(View view){
+    private void goToFD(View view){
 
         Intent fileDirectory;
 
@@ -679,7 +661,7 @@ public class viewScreen extends AppCompatActivity {
     /*
      *
      */
-    public void saveAndGo(View view)
+    private void saveAndGo(View view)
     {
 
         Intent fileDirectory;
@@ -747,7 +729,7 @@ public class viewScreen extends AppCompatActivity {
 
     }
 
-    public void updateSubMetaComments(){
+    private void updateSubMetaComments(){
 
         String[] reusedValues;
         int counter;
@@ -760,7 +742,7 @@ public class viewScreen extends AppCompatActivity {
 
 
         // reuse origional
-        for (counter = 0; counter <= 3; counter++)
+        for (counter = 0; counter <= 4; counter++)
         {
             newMeta += reusedValues[counter] + ",";
         }
@@ -768,45 +750,43 @@ public class viewScreen extends AppCompatActivity {
         newMeta += newComments + ",";
 
         //reuse the rest of the values
-        for (counter = 5; counter <= 12; counter++)
+        for (counter = 6; counter <= 14; counter++)
         {
             newMeta += reusedValues[counter] + ",";
         }
         //add last value without a comma
         newMeta += reusedValues[counter];
-        return;
     }
 
-    public void updateOrigMetaComments(){
+    private void updateOrigMetaComments(){
 
         String[] reusedValues;
         int counter;
         String newComments;
-        String tempMeta;
+        StringBuilder tempMeta;
 
         newComments = comments.getText().toString();
 
-        tempMeta = metaData.split("\n")[0] + "\n";
+        tempMeta = new StringBuilder(metaData.split("\n")[0] + "\n");
         reusedValues = metaData.split("\n")[1].split(",");
 
 
         // reuse origional
-        for (counter = 0; counter <= 3; counter++)
+        for (counter = 0; counter <= 4; counter++)
         {
-            tempMeta += reusedValues[counter] + ",";
+            tempMeta.append(reusedValues[counter]).append(",");
         }
         // change comments
-        tempMeta += newComments + ",";
+        tempMeta.append(newComments).append(",");
 
         //reuse the rest of the values
-        for (counter = 5; counter <= 12; counter++)
+        for (counter = 6; counter <= 14; counter++)
         {
-            tempMeta += reusedValues[counter] + ",";
+            tempMeta.append(reusedValues[counter]).append(",");
         }
         //add last value without a comma
-        tempMeta += reusedValues[counter];
-        metaData = tempMeta;
-        return;
+        tempMeta.append(reusedValues[counter]);
+        metaData = tempMeta.toString();
     }
 
     public void applySubgraph(View view)
@@ -828,7 +808,6 @@ public class viewScreen extends AppCompatActivity {
 
         // If the string entered into the text box is not valid, alert the user and do nothing else
         if (!validEntry(splitTextContent, graphData)) {
-            return;
         }
 
         // If the string entered into the text bos is valid...
@@ -837,7 +816,7 @@ public class viewScreen extends AppCompatActivity {
 
             // Chop the graph file string down to the the new subsection
             newGraph = chopString(graphData, splitTextContent.split(",")[0], splitTextContent.split(",")[1]);
-
+            //TODO: check if not empty
             // Initialize an array to hold the data for each specific graph
             graphArray = new String[4];
 
@@ -877,18 +856,25 @@ public class viewScreen extends AppCompatActivity {
             // Get the new meta
             newMeta = metaData.split("\n")[0] + "\n";
             reusedValues = metaData.split("\n")[1].split(",");
-
-            for (counter = 0; counter <= 8; counter++)
+            //" 0 Instrument, 1 Operator Name,2 Site Name,3 Sample ID,4 Temperature,5 Comments,6 Time and Date,7 Longitude," +
+            // "8 Latitude,9 Elevation, 10 R Squared, 11 Regression Slope, 12 Standard Error, 13 X Start Range, 14 X End Range, 15 AppVersion\n" +
+            for (counter = 0; counter <= 9; counter++)
             {
                 newMeta += reusedValues[counter] + ",";
             }
 
             newMeta += newRSquared + ",";
             newMeta += newRegSlope + ",";
-            newMeta += newStdError;
+            newMeta += newStdError + ",";
+
+            for (counter = 13; counter <= 14; counter++)
+            {
+                newMeta += reusedValues[counter] + ",";
+            }
+            newMeta += reusedValues[15];
 
             // Get the new image
-            newImage = imageData;
+            String newImage = imageData;
 
             yIntercept = getYIntercept(graphArray[0]);
 
@@ -918,21 +904,21 @@ public class viewScreen extends AppCompatActivity {
      * return - new chopped string
      * function to cut a string based off a start and end point
      */
-    static String chopString(String graphPoints, String xStart, String xEnd){
+    private static String chopString(String graphPoints, String xStart, String xEnd){
 
         String[] tempData;
-        String newString = "";
+        StringBuilder newString = new StringBuilder();
         int indexOfStart = 1;
         int indexOfEnd = 1;
 
 
-        //split data
+        //split data // Note this function works on the GraphData not graph array, which means Year,Month,day,Hour,minute,second, TIME
         tempData = graphPoints.split("\n");
-        float tempSecond = Float.parseFloat(tempData[1].split(",")[0]);
+        float tempSecond = Float.parseFloat(tempData[1].split(",")[6]);
 
         //loop through points until start is closest to graph starting
         while ( tempSecond < Float.parseFloat(xStart)){
-            tempSecond = Float.parseFloat(tempData[indexOfStart++].split(",")[0]);
+            tempSecond = Float.parseFloat(tempData[indexOfStart++].split(",")[6]);
         }
 
         if (indexOfStart != 1){
@@ -944,7 +930,7 @@ public class viewScreen extends AppCompatActivity {
 
         //loop through points until end is closest to ending
         while ( tempSecond < Float.parseFloat(xEnd)){
-            tempSecond = Float.parseFloat(tempData[indexOfEnd++].split(",")[0]);
+            tempSecond = Float.parseFloat(tempData[indexOfEnd++].split(",")[6]);
 
         }
 
@@ -953,15 +939,15 @@ public class viewScreen extends AppCompatActivity {
         indexOfEnd -= 1;
 
         //add headers
-        newString += tempData[0] + "\n";
+        newString.append(tempData[0]).append("\n");
 
 
         //loop through array and create string
         for(int i = indexOfStart; i < indexOfEnd; i++ ){
-            newString += tempData[i] + "\n";
+            newString.append(tempData[i]).append("\n");
         }
 
-        return newString;
+        return newString.toString();
     }
 
     /*
@@ -969,7 +955,7 @@ public class viewScreen extends AppCompatActivity {
      * return - true if valid entry false otherwise
      * function to check if xstart and xend is a valid entry
      */
-    boolean validEntry(String xStartAndEnd, String graphString){
+    private boolean validEntry(String xStartAndEnd, String graphString){
 
         double firstSecond = 0.0;
         double lastSecond = 0.0;
@@ -981,7 +967,7 @@ public class viewScreen extends AppCompatActivity {
         String[] lastData;
         String[] tempData;
 
-        if (graphString == ""){
+        if (graphString.equals("")){
             return false;
         }
 
@@ -993,29 +979,30 @@ public class viewScreen extends AppCompatActivity {
         lastData = tempData[tempData.length - 1].split(",");
 
         //get first and last second of graph
-        firstSecond = Double.parseDouble(firstData[0]);
-        lastSecond = Double.parseDouble(lastData[0]);
+        firstSecond = Double.parseDouble(firstData[6]);// Note this function works on the GraphData not graph array
+        lastSecond = Double.parseDouble(lastData[6]);
+
 
         // if null or not csv
-        if (xStartAndEnd == ""){
+        if (xStartAndEnd.equals("")){
             return false;
         }
-        if (!xStartAndEnd.contains(",")){
-            Toast.makeText(viewScreen.this,"Not a valid entry: must contain a comma",Toast.LENGTH_LONG).show();
+        if (!xStartAndEnd.contains("/")){
+            Toast.makeText(viewScreen.this,"Not a valid entry: must contain a slash",Toast.LENGTH_LONG).show();
             return false;
         }
 
         try {
             //get strings of ints
-            xStart = xStartAndEnd.split(",")[0];
-            xEnd = xStartAndEnd.split(",")[1];
+            xStart = xStartAndEnd.split("/")[0];
+            xEnd = xStartAndEnd.split("/")[1];
         } catch (Exception e) {
             Toast.makeText(viewScreen.this,"Not a valid entry: enter two numbers",Toast.LENGTH_LONG).show();
             return false;
         }
 
         //added for number, error
-        if (xStart == "" || xEnd == ""){
+        if (xStart.equals("") || xEnd.equals("")){
             return false;
         }
 
@@ -1049,7 +1036,6 @@ public class viewScreen extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        return;
     }
 
 }
