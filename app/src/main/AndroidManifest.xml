@@ -29,7 +29,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:screenOrientation="sensorPortrait">
+        android:screenOrientation="sensorPortrait"
+        android:fullBackupContent="@xml/backup_descriptor">
 
         <provider
             android:name="android.support.v4.content.FileProvider"

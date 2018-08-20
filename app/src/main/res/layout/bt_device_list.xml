@@ -15,7 +15,7 @@
         />
     <ListView android:id="@+id/paired_devices"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:stackFromBottom="false"
         android:layout_weight="1"
         />
@@ -27,12 +27,5 @@
         android:layout_height="wrap_content"
         android:text="If your device isn't listed, please pair your device in Android settings first"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-
-    </LinearLayout>
 
 </LinearLayout>

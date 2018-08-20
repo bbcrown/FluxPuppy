@@ -10,102 +10,84 @@ package edu.nau.li_840a_interface;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
+
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Path;
 import android.location.Location;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.support.annotation.Nullable;
-import android.widget.Button;
-import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.AuthProvider;
-import java.security.spec.ECField;
 import java.text.DateFormat;
 import android.widget.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+
+import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
 
 public class metaData extends AppCompatActivity {
     //Shared Preference Keys
-    public static final String MyPREFERENCES = "MyPrefs";
-    public static final String K_Name = "nameKey";
-    public static final String K_Site = "siteKey";
-    public static final String K_ID = "idKey";
-    public static final String K_Temp = "tempKey";
-    public static final String K_Comments = "commentsKey";
-    public static final String K_Long = "longKey";
-    public static final String K_Lat = "latKey";
-    public static final String K_Elev = "elevKey";
+    private static final String MyPREFERENCES = "MyPrefs";
+    private static final String K_Name = "nameKey";
+    private static final String K_Site = "siteKey";
+    private static final String K_ID = "idKey";
+    private static final String K_Temp = "tempKey";
+    private static final String K_Comments = "commentsKey";
+    private static final String K_Long = "longKey";
+    private static final String K_Lat = "latKey";
+    private static final String K_Elev = "elevKey";
 
-    SharedPreferences sharedpreferences;
+    private SharedPreferences sharedpreferences;
     // Initializing Fields
-    public EditText OperatorName;
-    public EditText SiteName;
-    public EditText sampleID;
-    public EditText temperature;
-    public EditText comments;
+    private EditText OperatorName;
+    private EditText SiteName;
+    private EditText sampleID;
+    private EditText temperature;
+    private EditText comments;
     Intent metaDataScreen;
     // Camera Variables
     ImageButton cameraB;
-    public Bitmap Bimage;
-    public Bitmap image;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    public ImageView imagePreview;
+    private Bitmap image;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private ImageView imagePreview;
 
-    // Time/Date Variables
-    private String currentDateTimeString;
     private String currentDateTimeFormatted;
 
     //GPS Variables
     private Button GPS_b;
-    public EditText et_GPSLong;
-    public EditText et_GPSLat;
-    public EditText et_Elevation;
+    private EditText et_GPSLong;
+    private EditText et_GPSLat;
+    private EditText et_Elevation;
     private LocationManager locationManager;
     private LocationListener listener;
 
-    String mCurrentPhotoPath;
+    private String mCurrentPhotoPath;
 
     // Text Watcher Handles Field Validation, checks after the Text has been changed, Raises Toast
-    private TextWatcher textWatcher = new TextWatcher() {
+    private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
         }
@@ -159,19 +141,20 @@ public class metaData extends AppCompatActivity {
 
         //***Time and Date***
         TextView tv_Date;
-        currentDateTimeString = DateFormat.getDateTimeInstance().format(currentDate);
-
+        String currentDateTimeString;
         // Set time on screen
-        currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        DateFormat dateAndTimeFormat = new SimpleDateFormat("MMM dd yyyy HH:mm:ss");
+        currentDateTimeString=dateAndTimeFormat.format(currentDate);
+        //currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
         tv_Date = findViewById(R.id.tv_Date);
         tv_Date.setText(currentDateTimeString);
 
-        // Format time to filename
-        DateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        currentDateTimeFormatted = dateAndTimeFormat.format(currentDate);
+        // Format time to filename (Only for display... now the real filename is created when logging is started)
+       //DateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");  /
+        //currentDateTimeFormatted = dateAndTimeFormat.format(currentDate);
 
         //***Camera***
-        ImageButton imageB = (ImageButton) findViewById(R.id.cameraB);
+        ImageButton imageB = findViewById(R.id.cameraB);
 
         //***GPS***
         et_GPSLong = findViewById(R.id.et_GPSLong);
@@ -224,6 +207,22 @@ public class metaData extends AppCompatActivity {
         //    sampleID.setText(sharedpreferences.getString("idKey",null));
         //}
 
+
+        // Listens to changes on the clipboard to get the sample ID
+        final ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+        clipboard.addPrimaryClipChangedListener( new ClipboardManager.OnPrimaryClipChangedListener() {
+            public void onPrimaryClipChanged() {
+                if (clipboard.hasPrimaryClip()
+                        && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN))
+                {
+                    ClipData clipData = clipboard.getPrimaryClip();
+                    ClipData.Item item = clipData.getItemAt(0);
+                    sampleID.setText(item.getText().toString());
+                }
+            }
+        });
+
+
         String CheckFlag;
         CheckFlag = getIntent().getStringExtra("FLAG");
         //Toast.makeText(metaData.this,CheckFlag,Toast.LENGTH_LONG).show();
@@ -271,7 +270,7 @@ public class metaData extends AppCompatActivity {
 
 
     // Starts On click Listener for GPS
-    void configure_button() {
+    private void configure_button() {
         // first check for permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -350,8 +349,8 @@ public class metaData extends AppCompatActivity {
             //System.out.println("TEST: Path: " + storageDir);
             //String imageFileName = "I-" + SiteName.getText() + "_" + sampleID.getText() + "_" + currentDateTimeFormatted;
             //System.out.println("TEST: File: " + imageFileName);
-            Bimage = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            MediaStore.Images.Media.insertImage(getContentResolver(), Bimage, mCurrentPhotoPath, "Site Name: " + SiteName.getText() + "Sample ID:" + sampleID.getText());
+            Bitmap bimage = BitmapFactory.decodeFile(mCurrentPhotoPath);
+            MediaStore.Images.Media.insertImage(getContentResolver(), bimage, mCurrentPhotoPath, "Site Name: " + SiteName.getText() + "Sample ID:" + sampleID.getText());
             //Toast.makeText(metaData.this,"Saved to Gallery",Toast.LENGTH_LONG).show();
             setPic();
         }
@@ -396,7 +395,7 @@ public class metaData extends AppCompatActivity {
 
     }
 
-    public void scaleImage() {
+    private void scaleImage() {
         if(image.getByteCount() > 500000) {
             Bitmap original = BitmapFactory.decodeFile(mCurrentPhotoPath);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -414,7 +413,7 @@ public class metaData extends AppCompatActivity {
         sampleID = findViewById(R.id.et_SID);
         temperature = findViewById(R.id.et_Temp);
         comments = findViewById(R.id.et_Com);
-        Button validate = (Button) findViewById(R.id.b_finish);
+        Button validate = findViewById(R.id.b_finish);
 
         String s1 = OperatorName.getText().toString();
         String s2 = SiteName.getText().toString();
@@ -514,7 +513,7 @@ public class metaData extends AppCompatActivity {
         graphScreen.putExtra("TEMPERATURE", passingValues[3]);
         graphScreen.putExtra("COMMENTS", passingValues[4]);
         //graphScreen.putExtra("IMAGEPATH", mCurrentPhotoPath);
-        graphScreen.putExtra("IMAGE", image);
+        graphScreen.putExtra("IMAGE", image); //TODO: Putting Image as intent causes crash as Images might be too big (possible solution: just forward temporary path)
         graphScreen.putExtra("TIME", currentDateTimeFormatted);
         graphScreen.putExtra("GPSLong", passingValues[5]);
         graphScreen.putExtra("GPSLat", passingValues[6]);
