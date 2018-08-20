@@ -196,11 +196,7 @@
         android:maxLength = "5"
         android:inputType="numberDecimal|numberSigned"
         android:digits="1234567890.-"
-        android:digits="1234567890."
-        android:ems="10"
         android:hint="@string/degrees_in_celsius"
-        android:inputType="numberDecimal"
-        android:maxLength="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView13"
         app:layout_constraintTop_toBottomOf="@+id/et_SID" />
