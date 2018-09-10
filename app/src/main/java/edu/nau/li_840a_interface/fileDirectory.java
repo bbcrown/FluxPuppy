@@ -1,16 +1,26 @@
 package edu.nau.li_840a_interface;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.Image;
+import android.util.Base64;
 import android.view.ViewGroup;
+
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,31 +28,40 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Collections;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.*;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.UUID;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.content.FileProvider;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import org.w3c.dom.Text;
+
+import edu.nau.li_840a_interface.R;
 
 public class fileDirectory extends AppCompatActivity implements OnClickListener {
 
-    private EditText et_Filter;
-    private Button btnSend;
-    private Button btnView;
-    private Button btnDel;
-    private Button btnFilter;
+    EditText et_Filter;
+    Button btnSend, btnView, btnDel, btnFilter, btnNewDataset, btnHome;
     private ListView lv;
-    private String message;
-    private final Uri URI = null;
+    String message;
+    Uri URI = null;
     private static final int PICK_FROM_GALLERY = 101;
-    private int viewFilePos;
-    private final ArrayList<Uri> listOfUri = new ArrayList<>();
-    private final ArrayList<String> selectedFiles = new ArrayList<>();
-    private final ArrayList<String> tempFiles = new ArrayList<>();
+    int viewFilePos;
+    ArrayList<Uri> listOfUri = new ArrayList<Uri>();
+    ArrayList<String> selectedFiles = new ArrayList<String>();
+    ArrayList<String> tempFiles = new ArrayList<String>();
 
     private String nd_flag;
 
@@ -71,7 +90,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                 });
         //JIMMY IS DONE ADDING CODE HERE
 
-        lv = findViewById(R.id.listView);
+        lv = (ListView) findViewById(R.id.listView);
 
         //SETS THE ARRAY LIST AS CLICKABLE
         lv.setChoiceMode(2);
@@ -80,7 +99,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
 
 
        //Creates list that is integrated with ListView Object
-        final List<String> appFiles = new ArrayList<>();
+        final List<String> appFiles = new ArrayList<String>();
 
         final ArrayList<String> sortedFiles = sortFiles(context.getFilesDir().list());
         //System.out.println("Sorted Files:" + sortedFiles);
@@ -106,15 +125,15 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                 View view = super.getView(position, convertView, parent);
 
                 // Initialize a TextView for ListView each Item
-                TextView tv = view.findViewById(android.R.id.text1);
+                TextView tv = (TextView) view.findViewById(android.R.id.text1);
 
                 // Set the text color of TextView (ListView Item)
 
-                if(lv.isItemChecked(position)){
+                if(lv.isItemChecked(position) == true){
                     tv.setBackgroundColor(Color.BLUE);}
                 else{tv.setBackgroundColor(Color.TRANSPARENT);}
                 for(int p = 0; p < lv.getCount(); p++){
-                    if(lv.isItemChecked(position)){ tv.setBackgroundColor(Color.GREEN);}
+                    if(lv.isItemChecked(position) == true){ tv.setBackgroundColor(Color.GREEN);}
                     else{tv.setBackgroundColor(Color.TRANSPARENT);}
                 }
 
@@ -140,7 +159,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                     imageFile = new File(context.getFilesDir(), "I-" + lv.getItemAtPosition(i).toString().substring(0, lv.getItemAtPosition(i).toString().length() - 4).split("_subgraph_")[0] + ".png");
                 }
 
-                if (!lv.isItemChecked(i)) {
+                if (lv.isItemChecked(i) == false) {
 
 
                     Uri uri = FileProvider.getUriForFile(context, "edu.nau.li_840a_interface", file);
@@ -151,7 +170,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                     listOfUri.remove(graphUri);
                     listOfUri.remove(imageUri);
                 }
-                if (lv.isItemChecked(i)) {
+                if (lv.isItemChecked(i) == true) {
 
                     Uri uri = FileProvider.getUriForFile(context, "edu.nau.li_840a_interface", file);
                     Uri graphUri = FileProvider.getUriForFile(context, "edu.nau.li_840a_interface", graphFile);
@@ -164,7 +183,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
 
                 }
                 for( int j = 0; j < lv.getCount(); j++)
-                    if(lv.isItemChecked(j)){
+                    if(lv.isItemChecked(j) == true ){
 
                         viewFilePos = j;}
                 checkFileCount();
@@ -176,7 +195,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                 //DELETE FUNCTIONALITY, ALL HIGHLIGHTED FILES ARE DELETED WHEN BUTTON'S PRESSED
                 btnDel.setOnClickListener(new View.OnClickListener() {
                     int j;
-                    final int listSize = lv.getCount();
+                    int listSize = lv.getCount();
                     @Override
                     public void onClick(View view) {
                         listOfUri.clear();
@@ -192,7 +211,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                                         int count = 0;
                                         //DOUBLE LOOP THRU SELECTED FILES AND LVCOUNT
                                         for( j = 0; j < listSize; j++){
-                                            if(lv.isItemChecked(j)) {
+                                            if(lv.isItemChecked(j) == true ) {
 
 
                                                 File file = new File(context.getFilesDir(), "M-" + lv.getItemAtPosition(j - count).toString());
@@ -275,13 +294,13 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
 
         });
         //SETS BUTTONS AND EDITEXT OBJECTS
-        et_Filter = findViewById(R.id.et_filter);
-        Button btnNewDataset = findViewById(R.id.btn_newdataset);
-        btnSend = findViewById(R.id.btn_email);
-        btnView = findViewById(R.id.btn_view);
-        btnDel = findViewById(R.id.btn_delete);
-        btnFilter = findViewById(R.id.btn_filter);
-        Button btnHome = findViewById(R.id.button5);
+        et_Filter = (EditText) findViewById(R.id.et_filter);
+        btnNewDataset = (Button) findViewById(R.id.btn_newdataset);
+        btnSend = (Button) findViewById(R.id.btn_email);
+        btnView = (Button) findViewById(R.id.btn_view);
+        btnDel = (Button) findViewById(R.id.btn_delete);
+        btnFilter =(Button) findViewById(R.id.btn_filter);
+        btnHome = (Button) findViewById(R.id.button5);
         btnSend.setOnClickListener(this);
         btnView.setOnClickListener(this);
         btnView.setClickable(false);
@@ -308,7 +327,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                     checkFileCount();
                     String filter = et_Filter.getText().toString();
                     for (int l = 0; l < lv.getCount(); l++){
-                        if((lv.getItemAtPosition(l).toString().toLowerCase()).contains(filter.toLowerCase())){
+                        if((lv.getItemAtPosition(l).toString().toLowerCase()).contains(filter.toLowerCase()) == true){
                             tempFiles.add(lv.getItemAtPosition(l).toString());
 
 
@@ -316,7 +335,10 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                     }
                     appFiles.clear();
                     arrayAdapter.clear();
-                    appFiles.addAll(tempFiles);
+                    for(int test =0; test < tempFiles.size(); test++)
+                    {
+                        appFiles.add(tempFiles.get(test));
+                    }
                     btnFilter.setText("Undo Filter");
                 } else {
                     appFiles.clear();
@@ -343,7 +365,8 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
 
 
         nd_flag = getIntent().getStringExtra("ND_BUTTON");
-        if (nd_flag.equals("False")) {
+        if (nd_flag==null) {
+        //    if (nd_flag.equals("False")) {
             btnNewDataset.setText("");
             btnNewDataset.setClickable(false);
             btnNewDataset.setBackgroundColor(Color.TRANSPARENT);
@@ -409,7 +432,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
     }
 
     //Method that handles making the buttons clickable or not, based on how many items are chosen
-    private void checkFileCount() {
+    public void checkFileCount() {
         if (lv.getCheckedItemCount() > 0 && lv.getCheckedItemCount() != 1) {
             btnView.setClickable(false);
             btnView.setBackgroundColor(Color.TRANSPARENT);
@@ -472,16 +495,19 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
 
 
     //This method is responsible for sorting the files into a newest-first ordering
-    private ArrayList<String> sortFiles(String[] allFiles){
+    ArrayList<String> sortFiles(String[] allFiles){
 
-        ArrayList<String> tempArrayList = new ArrayList<>();
-        ArrayList<String> returnArrayList = new ArrayList<>();
+        ArrayList<String> tempArrayList = new ArrayList<String>();
+        ArrayList<String> returnArrayList = new ArrayList<String>();
+        String[] tempArray = allFiles;
         String[] returnArray;
 
+        int numOfFiles = tempArray.length;
+
         //delete nonneeded files
-        for (String aTempArray : allFiles) {
-            if (aTempArray.startsWith("G-") || aTempArray.startsWith("M-") || aTempArray.startsWith("I-")) {
-                tempArrayList.add(aTempArray);
+        for(int k = 0; k < numOfFiles; k++){
+            if (tempArray[k].startsWith("G-") || tempArray[k].startsWith("M-") || tempArray[k].startsWith("I-")){
+                tempArrayList.add(tempArray[k]);
             }
         }
 

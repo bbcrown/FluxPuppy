@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Flux Puppy</string>
-    <string name="version_name">0.9.2</string>
+    <string name="version_name">0.9.1</string>
     <string name="meta_data">Metadata</string>
     <string name="finish">Start measurement</string>
     <string name="date">Date:</string>
@@ -9,6 +9,7 @@
     <string name="operator_name">Operator name:</string>
     <string name="site_name">Site name:</string>
     <string name="plot_number">Plot number:</string>
+    <string name="tempurature">Temperature:</string>
     <string name="todo">todo</string>
     <string name="required">Required</string>
     <string name="cancel">Cancel</string>
@@ -21,7 +22,7 @@
     <string name="temperature">Temperature:</string>
     <string name="sample_id">Sample ID:</string>
     <string name="additional_comments">Additional comments</string>
-    <string name="load">Loading …</string>
+    <string name="load">Loading ...</string>
 
     <string name="about"> Android Interface to LICOR LI-820 and LI-840 gas analyzers</string>
     <string name="licence">FluxPuppy is licensed under the GNU General Public License v3.0\nThe source code is available on GitHub @bnasr/FluxPuppy</string>

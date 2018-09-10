@@ -16,10 +16,11 @@ import java.util.Set;
 
  public class BTSelectDevice  extends Activity {
 
-     private boolean connecting=false;
+     boolean connecting=false;
 
      // Member fields
      private BluetoothAdapter mBtAdapter;
+     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
 
      @Override
      protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ import java.util.Set;
              Intent intent=new Intent();
              setResult(RESULT_CANCELED, intent);
              finish();
+             return;
          } else {
              if (!mBtAdapter.isEnabled()) {
                  //Prompt user to turn on Bluetooth
@@ -62,15 +64,16 @@ import java.util.Set;
                  Intent intent=new Intent();
                  setResult(RESULT_CANCELED, intent);
                  finish();
-             }
+                 return;}
+
          }
      }
 
 
-     private void deviceselection(){
+     public void deviceselection(){
 
          // Initialize array adapter for paired devices
-         ArrayAdapter<String> mPairedDevicesArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1);
 
          // Find and set up the ListView for paired devices
          ListView pairedListView = findViewById(R.id.paired_devices);
@@ -96,7 +99,7 @@ import java.util.Set;
      }
 
      // Set up on-click listener for the list (nicked this - unsure)
-     private final OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
+     private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
          public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
              if (connecting) return;
              connecting=true;
@@ -104,7 +107,7 @@ import java.util.Set;
              String info = ((TextView) v).getText().toString();
              String address = info.substring(info.length() - 17);
              ((TextView) v).setText(info +"\n" + "connecting...");
-             v.setBackgroundColor(0xff99cc00);
+             ((TextView) v).setBackgroundColor(0xff99cc00);
              // Make an intent to start next activity while taking an extra which is the MAC address.
              Intent intent=new Intent();
              intent.putExtra("DEVICE_ADDRESS",address);

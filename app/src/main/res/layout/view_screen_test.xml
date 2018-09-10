@@ -22,8 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="0.35"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dip"
@@ -115,7 +114,7 @@
                 android:id="@+id/metaDataImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="meta" />
+                />
 
         </LinearLayout>
 
@@ -198,7 +197,6 @@
 
             <Button
                 android:id="@+id/co2button"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
@@ -208,7 +206,6 @@
 
             <Button
                 android:id="@+id/h2obutton"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
@@ -218,7 +215,6 @@
 
             <Button
                 android:id="@+id/tempbutton"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
@@ -228,7 +224,6 @@
 
             <Button
                 android:id="@+id/presbutton"
-                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="0.25"
@@ -276,12 +271,11 @@
 
         <EditText
             android:id="@+id/splitText"
-            android:inputType="numberDecimal"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:digits="1234567890/-."
-            android:hint="Start/end"
+            android:digits="1234567890,-."
+            android:hint="Start,end"
             android:singleLine="true" />
 
     </LinearLayout>

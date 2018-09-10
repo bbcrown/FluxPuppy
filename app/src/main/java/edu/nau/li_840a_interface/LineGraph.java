@@ -17,16 +17,17 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
-class LineGraph
+public class LineGraph
 {
 
     ////////////////////////////
     // Class Member Variables //
     ////////////////////////////
-    private final GraphView graph;
-    private final PointsGraphSeries series;
-    private final String graphType;
+    private GraphView graph;
+    private PointsGraphSeries series;
+    private String graphType;
     private int numPoints;
+    private int color;
     private boolean zoomable;
 
     ///////////////
@@ -173,7 +174,7 @@ class LineGraph
         graphType = "static";
 
         // Save the color so that it can be used in the regression line
-        int color1 = color;
+        this.color = color;
 
     }
 

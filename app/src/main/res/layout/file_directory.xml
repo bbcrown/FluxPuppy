@@ -84,11 +84,11 @@
 
         <Button
             android:id="@+id/btn_email"
+            android:text="Email"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="0.25"
-            android:background="@android:drawable/btn_default"
-            android:text="Upload" />
+            android:background = "@android:drawable/btn_default"/>
 
     </LinearLayout>
 

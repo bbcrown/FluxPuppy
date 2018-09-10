@@ -19,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.4"
-        app:srcCompat="@drawable/dog"
-        android:contentDescription="Logo" />
+        android:paddingVertical="@android:dimen/app_icon_size"
+        app:srcCompat="@drawable/dog" />
 
     <Button
         android:layout_width="match_parent"
