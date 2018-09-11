@@ -945,10 +945,10 @@ public class graphScreen extends AppCompatActivity {
 
             values = lines[count].split(",");
 
-            co2Points += values[0] + "," + values[1] + "\n";
-            h2oPoints += values[0] + "," + values[2] + "\n";
-            tempPoints += values[0] + "," + values[3] + "\n";
-            presPoints += values[0] + "," + values[4] + "\n";
+            co2Points += values[0] + "," + values[7] + "\n";
+            h2oPoints += values[0] + "," + values[8] + "\n";
+            tempPoints += values[0] + "," + values[9] + "\n";
+            presPoints += values[0] + "," + values[10] + "\n";
 
         }
 
@@ -1067,6 +1067,10 @@ public class graphScreen extends AppCompatActivity {
         data = graphPoints.split("\n");
         numOfPoints = data.length;
 
+        //Dr Richardson wanted this if there are not at least 5 points
+        if (numOfPoints < 5) {
+            return NaN;
+        }
         //loop through and get xtotal and ytotal and their squares
         for(int i = 0; i < numOfPoints; i++){
             tempData = data[i].split(",");

@@ -575,7 +575,7 @@ public class viewScreen extends AppCompatActivity {
         // check if there was an update
         updateOrigMetaComments();
 
-        newComments = metaData.split("\n")[1].split(",")[4];
+        newComments = metaData.split("\n")[1].split(",")[5];
 
         //if comments are changed and they exit
         if (!newComments.equals(origionalComments)) {
@@ -715,7 +715,7 @@ public class viewScreen extends AppCompatActivity {
         newMetaFileName = "M-" + newFileName;
 
         updateSubMetaComments();
-        updateOrigMetaComments();
+        //updateOrigMetaComments();
 
         // Write the new subsection to the graph file
         try
@@ -760,7 +760,7 @@ public class viewScreen extends AppCompatActivity {
 
 
         // reuse origional
-        for (counter = 0; counter <= 3; counter++)
+        for (counter = 0; counter <= 4; counter++)
         {
             newMeta += reusedValues[counter] + ",";
         }
@@ -768,7 +768,7 @@ public class viewScreen extends AppCompatActivity {
         newMeta += newComments + ",";
 
         //reuse the rest of the values
-        for (counter = 5; counter <= 12; counter++)
+        for (counter = 6; counter <= 14; counter++)
         {
             newMeta += reusedValues[counter] + ",";
         }
@@ -791,7 +791,7 @@ public class viewScreen extends AppCompatActivity {
 
 
         // reuse origional
-        for (counter = 0; counter <= 3; counter++)
+        for (counter = 0; counter <= 4; counter++)
         {
             tempMeta += reusedValues[counter] + ",";
         }
@@ -799,7 +799,7 @@ public class viewScreen extends AppCompatActivity {
         tempMeta += newComments + ",";
 
         //reuse the rest of the values
-        for (counter = 5; counter <= 12; counter++)
+        for (counter = 6; counter <= 14; counter++)
         {
             tempMeta += reusedValues[counter] + ",";
         }
