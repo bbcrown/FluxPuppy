@@ -17,7 +17,7 @@ In order to successfully use the application, the user will need an Android tabl
 
 ### How To Install FluxPuppy:
 
-1. The installation requires downloading the APK file named “FluxPuppy.v.x.y.z.apk” from the __binary__ directory on the Github repo. The APK can be found [here](https://github.com/bnasr/FluxPuppy/raw/master/binary/FluxPuppy.v1.0.0.apk).
+1. The installation requires downloading the APK file named “FluxPuppy.apk” from the __binary__ directory on the Github repo. The APK can be found [here](https://github.com/bnasr/FluxPuppy/raw/master/binary/FluxPuppy.apk).
 
 2. Download the APK onto the mobile device. If the download is not available on a mobile device, download the APK on a computer. Then, email the APK to the mobile device, where it can then be downloaded.
 
