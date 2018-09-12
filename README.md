@@ -1,6 +1,5 @@
-# FluxPuppy Wireless
-Android Interface to Licor LI-820 and LI-840 gas analyzers using Bluetooth
-
+# FluxPuppy
+Android Interface to Licor LI-820 and LI-840 gas analyzers using Bluetooth and USB ports
 
 
 ## Introduction
@@ -25,3 +24,4 @@ In order to successfully use the application, the user will need an Android tabl
 3. Android may give warnings about the installation. Make sure that the permissions are allowed. It will ask if you would like to Install FluxPuppy, press “Install”. 
 
 4. After Installation is successful on the device, open the application. You will be prompted to allow for permissions. The required permissions are Camera, Location, and Storage. The app will not allow you to proceed without these permissions. Once the permissions are set, installation is complete
+
