@@ -1,12 +1,3 @@
-/*
- *  Author: James Beasley
- *  Last updated: April 6th, 2018
- *  Description: Handles the initialization and updating of the graphs, keeping a log of all every
- *               data point, and converting that log into a string to it can be written to a file
- *               in the graph screen Java file. Implements the Runnable interface so that the graph
- *               updating can be done on its own thread, and not have to share with the main
- *               application thread.
- */
 package edu.nau.li_840a_interface;
 
 import android.app.Activity;

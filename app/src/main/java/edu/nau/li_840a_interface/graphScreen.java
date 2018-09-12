@@ -1,10 +1,3 @@
-/*
- *  Author: James Beasley
- *  Last updated: April 20th, 2018
- *  Description: Java file for the graph screen of the application. Contains methods which
- *               correspond to each button on the screen, as well as a receiver for data from the
- *               gas analyzer.
- */
 package edu.nau.li_840a_interface;
 
 import android.content.BroadcastReceiver;

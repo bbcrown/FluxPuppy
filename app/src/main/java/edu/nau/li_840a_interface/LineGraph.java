@@ -1,12 +1,3 @@
-/*
- *  Author: James Beasley
- *  Last updated: April 6th, 2018
- *  Description: Uses the Android GraphView library to create a line graph. The graph is used on two
- *               different screens: the graph screen and the view screen. Graphs on the graph screen
- *               are initialized using the first constructor, which allows for data points to be
- *               added dynamically. Graphs on the view screen are initialized using the second
- *               constructor, and have their points specified by a string parameter.
- */
 package edu.nau.li_840a_interface;
 
 import android.graphics.Color;

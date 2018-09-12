@@ -1,11 +1,3 @@
-/*
- *  Author: Andrew Greene
- *  Last updated: April 22th, 2018
- *  Description: Here the user enters in all of the Relative MetaData pertaining to the data set.
- *               The data is saved and passed to the next screen(s).  Background Operations are
- *               Time, Date, and GPS Autofill, and field validation
- */
-
 package edu.nau.li_840a_interface;
 
 import android.Manifest;

@@ -28,15 +28,9 @@
     <string name="licence">FluxPuppy is licensed under the GNU General Public License v3.0\nThe source code is available on GitHub @bnasr/FluxPuppy</string>
 
     <string-array name="names_array">
-        <item>Andrew Richardson</item>
-        <item>Mariah Carbone</item>
-        <item>Tim Rademacher</item>
         <item>Bijan Seyednasrollah</item>
         <item>David Basler</item>
-        <item>Jim Le Moine</item>
-        <item>Jimmy Beasely</item>
-        <item>Samuel Beals</item>
-        <item>Joseph Kelroy</item>
-        <item>Andrew Greene</item>
+        <item>Mariah Carbone</item>
+        <item>Andrew Richardson</item>
     </string-array>
 </resources>
