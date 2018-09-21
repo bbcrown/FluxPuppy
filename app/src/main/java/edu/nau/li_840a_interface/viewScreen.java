@@ -477,6 +477,11 @@ public class viewScreen extends AppCompatActivity {
         String[] firstData;
         String[] lastData;
         String[] reusedValues;
+
+//        String newRSquared;
+//        String newStdError;
+//        String newRegSlope;
+
         int counter;
         double firstSecond;
         double lastSecond;
@@ -501,6 +506,15 @@ public class viewScreen extends AppCompatActivity {
         }
 
         DecimalFormat df = new DecimalFormat("#0.0000");
+
+//        newRegSlope = df.format(getRegressionSlope(graphArray[0]));
+//        newStdError = df.format(getStandardError(graphArray[0]));
+//        newRSquared = df.format(getRSquared(graphArray[0]));
+
+//        newMeta += newRSquared + ",";
+//        newMeta += newRegSlope + ",";
+//        newMeta += newStdError;
+
 
 
         newMeta += df.format(firstSecond) + ",";
@@ -730,10 +744,10 @@ public class viewScreen extends AppCompatActivity {
             outStream.write(newMeta.getBytes());
             outStream.close();
             //TODO: check if we need to rewrite comments
-            //rewrite origional comments
-            outStream = openFileOutput(metaFile, Context.MODE_PRIVATE);
-            outStream.write(metaData.getBytes());
-            outStream.close();
+            //rewrite original comments
+//            outStream = openFileOutput(metaFile, Context.MODE_PRIVATE);
+//            outStream.write(metaData.getBytes());
+//            outStream.close();
         }
         catch(Exception exception)
         {
@@ -753,27 +767,31 @@ public class viewScreen extends AppCompatActivity {
         int counter;
         String newComments;
 
+        String newMetatmp;
+
         newComments = comments.getText().toString();
 
-        newMeta = metaData.split("\n")[0] + "\n";
-        reusedValues = metaData.split("\n")[1].split(",");
+        newMetatmp = newMeta.split("\n")[0] + "\n";
+        reusedValues = newMeta.split("\n")[1].split(",");
 
 
         // reuse origional
         for (counter = 0; counter <= 4; counter++)
         {
-            newMeta += reusedValues[counter] + ",";
+            newMetatmp += reusedValues[counter] + ",";
         }
         // change comments
-        newMeta += newComments + ",";
+        newMetatmp += newComments + ",";
 
         //reuse the rest of the values
         for (counter = 6; counter <= 14; counter++)
         {
-            newMeta += reusedValues[counter] + ",";
+            newMetatmp += reusedValues[counter] + ",";
         }
         //add last value without a comma
-        newMeta += reusedValues[counter];
+        newMetatmp += reusedValues[counter];
+
+        newMeta = newMetatmp;
         return;
     }
 
@@ -878,15 +896,33 @@ public class viewScreen extends AppCompatActivity {
             newMeta = metaData.split("\n")[0] + "\n";
             reusedValues = metaData.split("\n")[1].split(",");
 
-            for (counter = 0; counter <= 8; counter++)
+            for (counter = 0; counter <= 9; counter++)
             {
                 newMeta += reusedValues[counter] + ",";
             }
 
             newMeta += newRSquared + ",";
             newMeta += newRegSlope + ",";
-            newMeta += newStdError;
+            newMeta += newStdError + ",";
 
+            String[] tempData;
+            String[] firstData;
+            String[] lastData;
+            double firstSecond;
+            double lastSecond;
+
+            //split data
+            tempData = graphArray[0].split("\n");
+            firstData = tempData[0].split(",");
+            lastData = tempData[tempData.length - 1].split(",");
+            firstSecond = Float.parseFloat(firstData[0]);
+            lastSecond = Float.parseFloat(lastData[0]);
+            DecimalFormat df = new DecimalFormat("#0.0000");
+
+            newMeta += df.format(firstSecond) + ",";
+            newMeta += df.format(lastSecond) + ",";
+
+            newMeta += reusedValues[15];
             // Get the new image
             newImage = imageData;
 
@@ -907,7 +943,7 @@ public class viewScreen extends AppCompatActivity {
 
             saveExitButton.setBackgroundResource(android.R.drawable.btn_default);
             saveExitButton.setEnabled(true);
-            setXRange(graphArray[0]);
+            //setXRange(graphArray[0]);
 
         }
 
