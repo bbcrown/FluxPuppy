@@ -38,11 +38,12 @@ public class GraphManager implements Runnable
     public String instrument;
     private String countdown;
     public boolean countdownNotified;
+    public boolean firstTimeRun = true;
 
     ///////////////
     // CONSTANTS //
     ///////////////
-    private static final int SLEEP_TIME = 1000;
+    private static final int SLEEP_TIME = 100;
 
 
     /*
@@ -106,7 +107,13 @@ public class GraphManager implements Runnable
         // GET INSTRUMENT
         data = this.getData();
         while (data == null){     // Wait for the first data to arrive to get instrument
-            try { Thread.sleep(SLEEP_TIME); } catch (Exception exception) {}
+            try {
+                if (firstTimeRun){
+                    Thread.sleep(1000);
+                    firstTimeRun = false;
+                }
+                Thread.sleep(SLEEP_TIME);
+            } catch (Exception exception) {}
             data = this.getData();
         }
 
@@ -175,6 +182,10 @@ public class GraphManager implements Runnable
             // Wait the specified wait time
             try
             {
+                if (firstTimeRun){
+                    Thread.sleep(1000);
+                    firstTimeRun = false;
+                }
                 Thread.sleep(SLEEP_TIME);
             }
             catch (Exception exception)
@@ -441,7 +452,7 @@ public class GraphManager implements Runnable
             minute = Calendar.getInstance().get(Calendar.MINUTE);
             second = Calendar.getInstance().get(Calendar.SECOND);
             millisecond = Calendar.getInstance().get(Calendar.MILLISECOND);
-            second = second + millisecond/1000;
+            second = second + (float)millisecond/1000;
 
 
             // Assign each value of the array to the class member variable
