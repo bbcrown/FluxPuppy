@@ -18,7 +18,7 @@ public class LineGraph
     private PointsGraphSeries series;
     private String graphType;
     private int numPoints;
-    //private int color; // this was never used 
+    //private int color; // this was never used
     private boolean zoomable;
 
     ///////////////
