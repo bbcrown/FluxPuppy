@@ -588,7 +588,8 @@ public class graphScreen extends AppCompatActivity {
                      "Latitude,Elevation,R Squared,Regression Slope,Standard Error,X Start Range,X End Range,AppVersion\n" +
                      metaInstrument + "," +metaOpName + "," + metaSite + "," + metaSampleId + "," + metaTemp + "," +
                      metaComments + "," + metaTime + "," + metaLong + "," + metaLat + "," +
-                     metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," + df.format(firstSecond) + "," + df.format(lastSecond) + "," + getString(R.string.version_name);
+                     metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," +
+                df.format(firstSecond) + "," + df.format(lastSecond) + "," + getString(R.string.version_name);
 
 
         // Build the file name using the site name, sample id, and time stamp
