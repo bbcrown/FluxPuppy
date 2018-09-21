@@ -73,7 +73,7 @@ import java.util.Set;
      public void deviceselection(){
 
          // Initialize array adapter for paired devices
-         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1);
+         mPairedDevicesArrayAdapter = new ArrayAdapter<>(this,  android.R.layout.simple_list_item_1);
 
          // Find and set up the ListView for paired devices
          ListView pairedListView = findViewById(R.id.paired_devices);
