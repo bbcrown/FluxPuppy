@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import java.util.ArrayList;
 import java.util.Date;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -41,7 +42,7 @@ public class GraphManager implements Runnable
     ///////////////
     // CONSTANTS //
     ///////////////
-    private static final int SLEEP_TIME = 200;
+    private static final int SLEEP_TIME = 1000;
 
 
     /*
@@ -312,7 +313,7 @@ public class GraphManager implements Runnable
         output = "";
 
         // Add the CSV header
-        output += "Seconds,Year,Month,Day,Hour,Minute,Second,CO2,H2O,Temperature,Pressure\n";
+        output += "Runtime,Year,Month,Day,Hour,Minute,Second,CO2,H2O,Temperature,Pressure\n";
 
         // Loop through each data series in the data array
         for (DataSeries series : dataArray)
@@ -404,7 +405,8 @@ public class GraphManager implements Runnable
         public int day;
         public int hour;
         public int minute;
-        public int second;
+        public float second;
+        private int millisecond;
 
         public String timeStamp;
 
@@ -433,11 +435,13 @@ public class GraphManager implements Runnable
             timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 
             year = Calendar.getInstance().get(Calendar.YEAR);
-            month = Calendar.getInstance().get(Calendar.MONTH);
+            month = Calendar.getInstance().get(Calendar.MONTH) + 1;
             day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-            hour = Calendar.getInstance().get(Calendar.HOUR);
+            hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             minute = Calendar.getInstance().get(Calendar.MINUTE);
             second = Calendar.getInstance().get(Calendar.SECOND);
+            millisecond = Calendar.getInstance().get(Calendar.MILLISECOND);
+            second = second + millisecond/1000;
 
 
             // Assign each value of the array to the class member variable
