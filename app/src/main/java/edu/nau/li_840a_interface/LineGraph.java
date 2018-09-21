@@ -18,7 +18,7 @@ public class LineGraph
     private PointsGraphSeries series;
     private String graphType;
     private int numPoints;
-    private int color;
+    //private int color; // this was never used, so commented
     private boolean zoomable;
 
     ///////////////
@@ -165,7 +165,7 @@ public class LineGraph
         graphType = "static";
 
         // Save the color so that it can be used in the regression line
-        this.color = color;
+        //this.color = color;
 
     }
 
