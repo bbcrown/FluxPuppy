@@ -45,7 +45,7 @@ public class GraphManager implements Runnable
     ///////////////
     // CONSTANTS //
     ///////////////
-    private static final int SLEEP_TIME = 100;
+    private static final int SLEEP_TIME = 400;
 
 
     /*
@@ -145,7 +145,7 @@ public class GraphManager implements Runnable
                 // Calculate the time difference between when the screen started
                 timeDiff = currentTime - startTime;
 
-                nowruntime = (timeDiff/500)*500;
+                nowruntime = (timeDiff/1000)*1000;
 
                 if(lastruntime<nowruntime){
                     // Add the points to the graphs
@@ -460,7 +460,7 @@ public class GraphManager implements Runnable
             minute = Calendar.getInstance().get(Calendar.MINUTE);
             second = Calendar.getInstance().get(Calendar.SECOND);
             millisecond = Calendar.getInstance().get(Calendar.MILLISECOND);
-            second = second + (float)millisecond/1000;
+//            second = second + (float)millisecond/1000;
 
 
             // Assign each value of the array to the class member variable
@@ -573,7 +573,8 @@ public class GraphManager implements Runnable
             output = "";
 
             // Add each value to the output string
-            output += time + "," + year + "," + month + "," + day + "," + hour + "," + minute + "," + Math.round(second  * 2) / 2.0 + "," + co2 + "," + h2o + "," + temp + "," + pres;
+//            output += time + "," + year + "," + month + "," + day + "," + hour + "," + minute + "," + Math.round(second  * 2) / 2.0 + "," + co2 + "," + h2o + "," + temp + "," + pres;
+            output += time + "," + year + "," + month + "," + day + "," + hour + "," + minute + "," + second + "," + co2 + "," + h2o + "," + temp + "," + pres;
 
             // Return the output
             return output;
