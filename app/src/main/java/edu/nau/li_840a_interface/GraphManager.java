@@ -30,6 +30,8 @@ public class GraphManager implements Runnable
     private TextView instrumentDisplay;
     private TextView finalbutton;
     private long startTime;
+    private long lastruntime;
+    private long nowruntime;
     private long endTime;
     private boolean running;
     private boolean logging;
@@ -143,11 +145,17 @@ public class GraphManager implements Runnable
                 // Calculate the time difference between when the screen started
                 timeDiff = currentTime - startTime;
 
-                // Add the points to the graphs
-                this.addPoints(data, timeDiff);
+                nowruntime = (timeDiff/500)*500;
 
-                // flag data as recorded
-                newDataAvailable = false;
+                if(lastruntime<nowruntime){
+                    // Add the points to the graphs
+                    this.addPoints(data, nowruntime);
+
+                    // flag data as recorded
+                    newDataAvailable = false;
+                    lastruntime = nowruntime;
+                }
+
             }
 
                 if (logging) {
@@ -555,6 +563,7 @@ public class GraphManager implements Runnable
          *  Allows the series to be printed as string. Used for logging to a
          *  CSV file.
          */
+
         public String toString()
         {
 
@@ -564,7 +573,7 @@ public class GraphManager implements Runnable
             output = "";
 
             // Add each value to the output string
-            output += time + "," + year + "," + month + "," + day + "," + hour + "," + minute + "," + second + "," + co2 + "," + h2o + "," + temp + "," + pres;
+            output += time + "," + year + "," + month + "," + day + "," + hour + "," + minute + "," + Math.round(second  * 2) / 2.0 + "," + co2 + "," + h2o + "," + temp + "," + pres;
 
             // Return the output
             return output;
