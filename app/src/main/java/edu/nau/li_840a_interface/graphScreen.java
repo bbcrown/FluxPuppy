@@ -668,7 +668,7 @@ public class graphScreen extends AppCompatActivity {
                         Toast.makeText(context, "USB Ready", Toast.LENGTH_SHORT).show();
                         if (usbService != null) {
                             String initMessage;
-                            initMessage = "<CFG><OUTRATE>{0.5}</OUTRATE></CFG>\n";
+                            initMessage = "<CFG><OUTRATE>0.5</OUTRATE></CFG>\n";
                             usbService.write(initMessage.getBytes());
                         }
                         break;
