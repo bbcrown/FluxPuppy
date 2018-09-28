@@ -3,6 +3,10 @@ package edu.nau.li_840a_interface;
 import android.app.Activity;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.media.Ringtone;
+import android.net.Uri;
+import android.view.View;
 import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import java.util.ArrayList;
@@ -29,12 +33,16 @@ public class GraphManager implements Runnable
     private TextView presDisplay;
     private TextView instrumentDisplay;
     private TextView finalbutton;
+    private TextView warnDisplay;
+    private String warnString;
     private long startTime;
     private long lastruntime;
     private long nowruntime;
     private long endTime;
+    public String startTimeFormatted;
     private boolean running;
     private boolean logging;
+    private boolean waslogging;
     private String lastData;
     private boolean newDataAvailable;
     public String instrument;
@@ -81,6 +89,7 @@ public class GraphManager implements Runnable
         presDisplay = textIds[3];
         instrumentDisplay = textIds[6];
         finalbutton = textIds[7];
+        warnDisplay = textIds[8];
 
         // Get the start time
         time = new Date();
@@ -91,7 +100,11 @@ public class GraphManager implements Runnable
 
         // Assume we are not logging a subset at the start
         logging = false;
-
+        waslogging = false;
+        // Initiate the timer for the reminder
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MILLISECOND, 30 * 1000);
+        endTime = calendar.getTimeInMillis();
     }
 
     /*
@@ -185,15 +198,32 @@ public class GraphManager implements Runnable
                             finalbutton.setText(countdown);
                         }
                     });
+                } else{
+                    if (!waslogging){
+                        // Add a reminder if logging is not started for 30 sec....
+                        time = new Date();
+                        currentTime = time.getTime();
+                        timeDiff = endTime - currentTime;
+                        if (timeDiff<0) {
+                            //PLAY SOUND
+                            try {
+                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(activity, notification);
+                                r.play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.add(Calendar.MILLISECOND, 30 * 1000);
+                            endTime = calendar.getTimeInMillis(); // Reset Timer for the next 30 sec
+                        }
+                    }
+
                 }
 
-            // Wait the specified wait time
+        // Wait the specified wait time
             try
             {
-                if (firstTimeRun){
-                    Thread.sleep(1000);
-                    firstTimeRun = false;
-                }
                 Thread.sleep(SLEEP_TIME);
             }
             catch (Exception exception)
@@ -245,16 +275,20 @@ public class GraphManager implements Runnable
 
         // Signal that we should be adding points to the log
         logging = true;
-
-        // Reset the time
-        //time = new Date();
-       // startTime = time.getTime();
+        waslogging = true;
+        // Reset the time when logging is started
+        Date time;
+        time = new Date();
+        startTime = time.getTime();
+        DateFormat dateAndTimeFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        startTimeFormatted = dateAndTimeFormat.format(startTime);
+        lastruntime=-1;
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MILLISECOND, duration);
         endTime = calendar.getTimeInMillis();
 
-        //resetGraphs();
+        resetGraphs();
 
     }
 
@@ -402,6 +436,15 @@ public class GraphManager implements Runnable
                 h2oDisplay.setText(String.format("%.3f ppt", newSeries.h2o));
                 tempDisplay.setText(String.format("%.1f °C", newSeries.temp));
                 presDisplay.setText(String.format("%.1f kPa", newSeries.pres));
+                // WARNING when instrument is still warming up or Battery Low
+                if (newSeries.temp < 50.0 | newSeries.volt < 10.6) {
+                    warnString="";
+                    warnDisplay.setVisibility(View.VISIBLE);
+                    if (newSeries.temp < 50.0) { warnString+=instrument + ": warming up, please wait"; }
+                    if (newSeries.temp < 50.0 & newSeries.volt < 10.6) {warnString+='\n'; }
+                    if (newSeries.volt < 10.6) { warnString+= String.format("%s: low Battery warning (%.1f V)",instrument, newSeries.volt); }
+                    warnDisplay.setText(warnString);
+                }else {warnDisplay.setText("");warnDisplay.setVisibility(View.GONE);}
 
             }
         });
@@ -434,6 +477,7 @@ public class GraphManager implements Runnable
         public float h2o;
         public float temp;
         public float pres;
+        public float volt;
 
         /*
          *  Constructor for the DataSeries. Takes in the data from the
@@ -454,7 +498,7 @@ public class GraphManager implements Runnable
             timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 
             year = Calendar.getInstance().get(Calendar.YEAR);
-            month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+            month = Calendar.getInstance().get(Calendar.MONTH) + 1; //Months are indexed from 0 not 1
             day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
             hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
             minute = Calendar.getInstance().get(Calendar.MINUTE);
@@ -468,6 +512,7 @@ public class GraphManager implements Runnable
             h2o = parse[1];
             temp = parse[2];
             pres = parse[3];
+            volt = parse[4];
 
         }
 
@@ -485,7 +530,7 @@ public class GraphManager implements Runnable
             float[] output;
 
             // Initialize our array which will hold all the parsed values
-            output = new float[4];
+            output = new float[5];
 
             // Try to parse out the CO2
             try
@@ -526,6 +571,15 @@ public class GraphManager implements Runnable
             {
                 output[3] = (float) 0.0;
             }
+            // Try to parse out the Battery
+            try
+            {
+                output[4] = stringToFloat(data.split("<ivolt>")[1].split("</ivolt>")[0]);
+            }
+            catch(Exception exception)
+            {
+                output[4] = (float) 0.0;
+            }
 
             // Return an array of all the parsed values
             return output;
@@ -542,11 +596,12 @@ public class GraphManager implements Runnable
 
             int count;
             float number;
-            int exponent;
+            int exponent=0;
 
             // Parse out the number, and the exponent
             number = Float.parseFloat(input.split("e")[0]);
-            exponent = Integer.parseInt(input.split("e")[1]);
+            if (input.split("e").length>1) // Generalized to work also for non-scientific notation
+                exponent = Integer.parseInt(input.split("e")[1]);
 
             // Multiply the number by the exponent
             for (count = 0; count < exponent; count++)
