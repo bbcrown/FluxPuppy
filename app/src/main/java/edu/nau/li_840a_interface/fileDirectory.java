@@ -345,7 +345,7 @@ public class fileDirectory extends AppCompatActivity implements OnClickListener 
                     arrayAdapter.clear();
                     tempFiles.clear();
 
-                    for (int i = 0; i < context.getFilesDir().listFiles().length - 1; i++) {
+                    for (int i = 0; i < context.getFilesDir().listFiles().length; i++) {
                         if (sortedFiles.get(i).contains(metaCheck)) {
                             appFiles.add(sortedFiles.get(i).substring(2));
                         }

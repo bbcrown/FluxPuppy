@@ -91,7 +91,7 @@ public class graphScreen extends AppCompatActivity {
         graphIds[3] = findViewById(R.id.graph4);
 
         // Get the screen IDs for each of the four text views
-        textIds = new TextView[8];
+        textIds = new TextView[9];
         textIds[0] = findViewById(R.id.co2display);
         textIds[1] = findViewById(R.id.h2odisplay);
         textIds[2] = findViewById(R.id.tempdisplay);
@@ -101,6 +101,7 @@ public class graphScreen extends AppCompatActivity {
         textIds[5] = findViewById(R.id.sampledisplay);
         textIds[6] = findViewById(R.id.instrumentdisplay);
         textIds[7] = findViewById(R.id.finalbutton);
+        textIds[8] = findViewById(R.id.warningdisplay);
 
         Intent intent = getIntent();
         Bundle bd = intent.getExtras();
@@ -438,7 +439,10 @@ public class graphScreen extends AppCompatActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                // Stop manager
+                manager.stoplogging();
+                manager.deconstruct();
+                loggingstopped=false; // Reset logging status
                 // Initialize the meta data screen
                 Intent metaDataScreen;
                 metaDataScreen = new Intent(con, metaData.class);
@@ -492,7 +496,7 @@ public class graphScreen extends AppCompatActivity {
                 if (!value.equals("")) {
                     logduration = Integer.parseInt(value) * 1000;
                 }
-                countdown_label = String.format("%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
+                countdown_label = String.format("Log duration\n%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
                 textIds[7].setText(countdown_label);
                 return;
             }
@@ -538,6 +542,9 @@ public class graphScreen extends AppCompatActivity {
         Button button = findViewById(R.id.finalbutton);
         button.setText("Saving...");
 
+        // Get the actual startTime from the manager
+        metaTime=manager.startTimeFormatted;
+
         // Deconstruct the manager
         manager.stoplogging();
         manager.deconstruct();
@@ -553,7 +560,7 @@ public class graphScreen extends AppCompatActivity {
         metaSampleId = getIntent().getStringExtra("SAMPLE_ID");
         metaTemp = getIntent().getStringExtra("TEMPERATURE");
         metaComments = getIntent().getStringExtra("COMMENTS");
-        metaTime = getIntent().getStringExtra("TIME");
+        //metaTime = getIntent().getStringExtra("TIME");
         metaLong = getIntent().getStringExtra("GPSLong");
         metaLat = getIntent().getStringExtra("GPSLat");
         metaElevation = getIntent().getStringExtra("ELEVATION");
@@ -571,7 +578,7 @@ public class graphScreen extends AppCompatActivity {
         try
         {
 
-            firstSecond = getXRangeStart(graphArray[0]);
+            firstSecond = getXRangeStart(graphArray[0]);  // we now reset the counter when logging starts
             lastSecond = getXRangeEnd(graphArray[0]);
 
         }

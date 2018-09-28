@@ -53,7 +53,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import static android.content.ClipDescription.MIMETYPE_TEXT_PLAIN;
 
 public class metaData extends AppCompatActivity {
     //Shared Preference Keys
@@ -202,6 +204,21 @@ public class metaData extends AppCompatActivity {
         };
         configure_button();
         GPS_b.performClick();
+
+        // ***SAMPLE ID FROM CLIPBOARD***
+        // Listens to changes on the clipboard to get the sample ID
+        final ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+        clipboard.addPrimaryClipChangedListener( new ClipboardManager.OnPrimaryClipChangedListener() {
+            public void onPrimaryClipChanged() {
+                if (clipboard.hasPrimaryClip()
+                        && clipboard.getPrimaryClipDescription().hasMimeType(MIMETYPE_TEXT_PLAIN))
+                {
+                    ClipData clipData = clipboard.getPrimaryClip();
+                    ClipData.Item item = clipData.getItemAt(0);
+                    sampleID.setText(item.getText().toString());
+                }
+            }
+        });
 
         // ***AutoFill***
 
