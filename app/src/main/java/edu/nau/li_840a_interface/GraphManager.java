@@ -48,7 +48,6 @@ public class GraphManager implements Runnable
     public String instrument;
     private String countdown;
     public boolean countdownNotified;
-    public boolean firstTimeRun = true;
 
     ///////////////
     // CONSTANTS //
@@ -123,12 +122,14 @@ public class GraphManager implements Runnable
         data = this.getData();
         while (data == null){     // Wait for the first data to arrive to get instrument
             try {
-                if (firstTimeRun){
-                    Thread.sleep(1000);
-                    firstTimeRun = false;
-                }
                 Thread.sleep(SLEEP_TIME);
             } catch (Exception exception) {}
+            data = this.getData();
+        }
+
+        // In case the instrument is just connected, there might be some gibberish in the data buffer... we drop the first string and use the second one to identify instrument (and fields in future versions)
+        while (!(data.substring(0,1).equals("<"))){     // Wait for the first data to arrive to get instrument
+            try { Thread.sleep(SLEEP_TIME); } catch (Exception exception) {}
             data = this.getData();
         }
 
