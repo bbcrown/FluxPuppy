@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1413689.svg)](https://doi.org/10.5281/zenodo.1413689) [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 # FluxPuppy
 Android Interface to Licor LI-820 and LI-840 gas analyzers using Bluetooth and USB ports
 
@@ -7,6 +8,8 @@ Android Interface to Licor LI-820 and LI-840 gas analyzers using Bluetooth and U
 FluxPuppy is a mobile Android application for use with the LI-840A gas analyzer. 
 The application can be used to observe, collect, and organize data streamed from the analyzer into user specified data sets. 
 FluxPuppy is designed to replace the data collection system implemented by LI-COR, by providing many features not present in the current system such as advanced organization, live data readout, and included metadata.
+
+![LI-820](https://licor.co.za/wp-content/uploads/2015/10/LI-820_small.png)
 
 ## Installation
 
