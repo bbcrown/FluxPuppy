@@ -28,3 +28,4 @@ In order to successfully use the application, the user will need an Android tabl
 
 4. After Installation is successful on the device, open the application. You will be prompted to allow for permissions. The required permissions are Camera, Location, and Storage. The app will not allow you to proceed without these permissions. Once the permissions are set, installation is complete
 
+![A schematic of the portable system box, called the Dog House. Numbers identify individual components and correspond to column 1 in Table 1. They are: 1) case, 2) IRGA, 3) tablet or phone, 4) null modem cable/adapter, 5) Serial-Bluetooth adapter, 6) 12V/5V power supply, 7) battery housing, 8) pump, 9) switch, 10) air filter, 11) tubing, and 12) tubing connections. Drawings are close to but not exactly to scale for clarity purposes.](fluxpuppy-schematic.png)
