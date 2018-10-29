@@ -11,14 +11,15 @@ FluxPuppy is designed to replace the data collection system implemented by LI-CO
 
 ![LI-820](https://licor.co.za/wp-content/uploads/2015/10/LI-820_small.png)
 
-## Installation
+## Installation Requirements
 
-### Requirements
 In order to successfully use the application, the user will need an Android tablet device running Android 7.0 or higher, as well as an LI-840A gas analyzer and all the cables that come included with it. 
 
 **NOTE:** The software may also work on mobile phone devices running Android 7.0 or higher, but the software was designed for tablet sized screens, and UI elements may appear differently than they do in the manual.
 
-### Quick Start Guide
+
+## Quick Start Guide
+
 #### 1. How To Install Flux Puppy
 The installation requires downloading the APK file named “FluxPuppy.apk” from the __binary__ directory on the Github repo. The APK can be found [here](https://github.com/bnasr/FluxPuppy/raw/master/binary/FluxPuppy.apk). Open the APK file, it will ask if you would like to Install Flux Puppy, press **Install**. Then press **DONE**. Navigate to **ALL APPS** where Flux Puppy will be found. Open Flux Puppy. You will be prompted to allow for permissions on the Camera, Location, and Storage. The app will not allow you to proceed without these permissions
 
