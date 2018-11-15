@@ -182,6 +182,15 @@ public class graphScreen extends AppCompatActivity {
         Resources res = getResources();
         builder.setIcon(res.getDrawable(R.drawable.dog));
 
+
+        builder.setNeutralButton("On a test leash\n(Data Mocker)", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Data Mocker Functionality
+
+            }
+        });
+
         // If the yes button is pressed
         builder.setPositiveButton("On a leash\n(USB)", new DialogInterface.OnClickListener() {
             @Override
