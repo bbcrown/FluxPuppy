@@ -400,7 +400,7 @@ public class GraphManager implements Runnable
      *  DataSeries, adds that DataSeries to the log, and updates each
      *  graph using the new information.
      */
-    private void addPoints(String data, long time)
+    public void addPoints(String data, long time)
     {
 
         final DataSeries newSeries;

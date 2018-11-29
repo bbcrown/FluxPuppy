@@ -1,5 +1,8 @@
 package edu.nau.li_840a_interface;
 import java.util.Random;
+import android.os.Handler;
+import android.os.Binder;
+import android.os.IBinder;
 
 public class dataMocker {
 
@@ -20,11 +23,16 @@ public class dataMocker {
     static final String raw_start = "<raw>";
     static final String raw_end = "</raw>";
 
+    private Handler mHandler;
 
     /* Example Licor XML
     ```<li820><data><celltemp>4.7040696e1</celltemp><cellpres>7.8869514e1</cellpres><co2>5.9971117e2</co2>
        <co2abs>8.6043262e-2</co2abs><ivolt>1.5730590e1</ivolt><raw>2360202,2642891</raw></data></li820>```
     */
+
+    public void setHandler(Handler mHandler) {
+        this.mHandler = mHandler;
+    }
 
     public static String generateXML(){
         String mock_xml = "";
@@ -41,4 +49,9 @@ public class dataMocker {
         return mock_xml;
     }
 
+    public class DMBinder extends Binder {
+        public dataMocker getService() {
+            return dataMocker.this;
+        }
+    }
 }
