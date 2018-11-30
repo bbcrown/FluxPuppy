@@ -6,14 +6,19 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.media.Ringtone;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.jjoe64.graphview.GraphView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 
 public class GraphManager implements Runnable
 {
@@ -35,6 +40,7 @@ public class GraphManager implements Runnable
     private TextView finalbutton;
     private TextView warnDisplay;
     private String warnString;
+    public Boolean runningTest = false;
     private long startTime;
     private long lastruntime;
     private long nowruntime;
@@ -49,6 +55,7 @@ public class GraphManager implements Runnable
     private String countdown;
     public boolean countdownNotified;
 
+
     ///////////////
     // CONSTANTS //
     ///////////////
@@ -61,6 +68,7 @@ public class GraphManager implements Runnable
      */
     public GraphManager(Activity activity, GraphView[] graphIds, TextView textIds[])
     {
+
 
         Date time;
 
@@ -112,7 +120,6 @@ public class GraphManager implements Runnable
      */
     public void run()
     {
-
         String data;
         Date time;
         long currentTime;
@@ -120,25 +127,72 @@ public class GraphManager implements Runnable
 
         // GET INSTRUMENT
         data = this.getData();
+        if(data == null){
+            Log.e("Data was ", "null");
+        }else{
+            Log.e("Data is me, bitch: ", this.getData());
+        }
+
+
+
+
         while (data == null){     // Wait for the first data to arrive to get instrument
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (Exception exception) {}
-            data = this.getData();
+
+            if(this.getData() == null){
+                Log.e("Data: ", "Most assuredly null");
+            }else{
+                Log.e("Data was not null", "So annoying");
+                Log.e("Data: ", this.getData());
+            }
+
+
+            if(this.getData() == "I like candy"){
+                this.runningTest = true;
+                Log.e("Set runningTest to", "true");
+
+
+            }
+
+            if(this.getData() == "I hate candy"){
+                this.runningTest = false;
+                Log.e("Set runningTest to", "false");
+
+
+            }
+
+            if(this.runningTest){
+                data = this.mockData();
+            }else{
+                data = this.getData();
+            }
+
         }
 
-        // In case the instrument is just connected, there might be some gibberish in the data buffer... we drop the first string and use the second one to identify instrument (and fields in future versions)
-        while (!(data.substring(0,1).equals("<"))){     // Wait for the first data to arrive to get instrument
-            try { Thread.sleep(SLEEP_TIME); } catch (Exception exception) {}
-            data = this.getData();
+        Log.e("Mocked data?", data);
+
+        if(!runningTest){
+            // In case the instrument is just connected, there might be some gibberish in the data buffer... we drop the first string and use the second one to identify instrument (and fields in future versions)
+            while (!(data.substring(0,1).equals("<"))){     // Wait for the first data to arrive to get instrument
+                try { Thread.sleep(SLEEP_TIME);
+                } catch (Exception exception) {
+
+                }
+                data = this.getData();
+
+            }
         }
+
 
         try { instrument = data.substring(data.lastIndexOf('/') + 1).toUpperCase(); // Use the last element in datastring, not the first
-              instrument = instrument.substring(0, instrument.length() - 1); // seems to be more stable if incomplete strings are received.
-        } catch (Exception exception) { instrument="unknown";}
+            instrument = instrument.substring(0, instrument.length() - 1); // seems to be more stable if incomplete strings are received.
+        } catch (Exception exception) {
+            instrument="unknown";}
         activity.runOnUiThread(new Runnable() {
             public void run() {
-        instrumentDisplay.setText(instrument);
+                instrumentDisplay.setText(instrument);
             }
         });
         // END GET INSTRUMENT
@@ -147,10 +201,28 @@ public class GraphManager implements Runnable
         // Loops until the screen is deconstructed
         while (running)
         {
+            if(runningTest){
+                Log.e("Still running", "test");
+                try{
+                    TimeUnit.MILLISECONDS.sleep(500);
+                    newDataAvailable = true;
+                    Log.e("newDataAvailable", "true");
+                }catch (Exception e){
+                    Log.w("Couldn't sleep", e);
+                }
+            }
             // The following section is runs every time soon after new data is available, (depending on the settings of the LICOR, default 0.5s and SLEEP_TIME)
             if (newDataAvailable) {
+
+
                 // Get the latest data from the instrument
-                data = this.getData();
+                if(runningTest){
+                    data = this.mockData();
+                }else{
+                    data = this.getData();
+                }
+                Log.e("Got here", "Line 217");
+
 
                 // Get the current time
                 time = new Date();
@@ -162,6 +234,7 @@ public class GraphManager implements Runnable
                 nowruntime = (timeDiff/1000)*1000;
 
                 if(lastruntime<nowruntime){
+                    Log.e("Adding points", "To graph");
                     // Add the points to the graphs
                     this.addPoints(data, nowruntime);
 
@@ -172,57 +245,57 @@ public class GraphManager implements Runnable
 
             }
 
-                if (logging) {
-                    // Calculate the remaining time
+            if (logging) {
+                // Calculate the remaining time
+                time = new Date();
+                currentTime = time.getTime();
+                timeDiff = endTime - currentTime;
+                if (timeDiff<0 & !countdownNotified) {
+                    //Notification when countdown reaches zero
+                    activity.runOnUiThread(new Runnable() {
+                        public void run() {
+                            finalbutton.setTextColor(Color.RED);
+                        }
+                    });
+                    countdownNotified=true;
+
+                    MediaPlayer ring= MediaPlayer.create(activity,R.raw.smalldogbarking);
+                    ring.start();
+                }
+                if (timeDiff<0){
+                    countdown = String.format("-%d:%02d", Math.abs(timeDiff / (60 * 1000) % 60), Math.abs(timeDiff / 1000 % 60));
+                } else {
+                    countdown = String.format("%d:%02d", timeDiff / (60 * 1000) % 60, timeDiff / 1000 % 60);
+                }
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        finalbutton.setText(countdown);
+                    }
+                });
+            } else{
+                if (!waslogging){
+                    // Add a reminder if logging is not started for 30 sec....
                     time = new Date();
                     currentTime = time.getTime();
                     timeDiff = endTime - currentTime;
-                    if (timeDiff<0 & !countdownNotified) {
-                        //Notification when countdown reaches zero
-                        activity.runOnUiThread(new Runnable() {
-                            public void run() {
-                                finalbutton.setTextColor(Color.RED);
-                            }
-                        });
-                        countdownNotified=true;
-
-                        MediaPlayer ring= MediaPlayer.create(activity,R.raw.smalldogbarking);
-                        ring.start();
-                    }
-                    if (timeDiff<0){
-                        countdown = String.format("-%d:%02d", Math.abs(timeDiff / (60 * 1000) % 60), Math.abs(timeDiff / 1000 % 60));
-                    } else {
-                        countdown = String.format("%d:%02d", timeDiff / (60 * 1000) % 60, timeDiff / 1000 % 60);
-                    }
-                    activity.runOnUiThread(new Runnable() {
-                        public void run() {
-                            finalbutton.setText(countdown);
+                    if (timeDiff<0) {
+                        //PLAY SOUND
+                        try {
+                            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                            Ringtone r = RingtoneManager.getRingtone(activity, notification);
+                            r.play();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    });
-                } else{
-                    if (!waslogging){
-                        // Add a reminder if logging is not started for 30 sec....
-                        time = new Date();
-                        currentTime = time.getTime();
-                        timeDiff = endTime - currentTime;
-                        if (timeDiff<0) {
-                            //PLAY SOUND
-                            try {
-                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                                Ringtone r = RingtoneManager.getRingtone(activity, notification);
-                                r.play();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.add(Calendar.MILLISECOND, 30 * 1000);
-                            endTime = calendar.getTimeInMillis(); // Reset Timer for the next 30 sec
-                        }
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.MILLISECOND, 30 * 1000);
+                        endTime = calendar.getTimeInMillis(); // Reset Timer for the next 30 sec
                     }
-
                 }
 
-        // Wait the specified wait time
+            }
+
+            // Wait the specified wait time
             try
             {
                 Thread.sleep(SLEEP_TIME);
@@ -395,12 +468,22 @@ public class GraphManager implements Runnable
         return lastData;
     }
 
+    private String mockData()
+    {
+        // TODO: Find a good place to set 'newDataAvailable' to true
+        dataMocker mocker = new dataMocker();
+        String mockedData = mocker.generateXML();
+        this.newDataAvailable = false;
+        return mockedData;
+
+    }
+
     /*
      *  Takes in a string of data from the instrument, converts it into a
      *  DataSeries, adds that DataSeries to the log, and updates each
      *  graph using the new information.
      */
-    public void addPoints(String data, long time)
+    private void addPoints(String data, long time)
     {
 
         final DataSeries newSeries;
@@ -411,8 +494,10 @@ public class GraphManager implements Runnable
         // If the data point is invalid, do not add it to the data array or graphs
         if (newSeries.co2 == 0 || newSeries.h2o == 0 || newSeries.temp == 0 || newSeries.pres == 0)
         {
+            Log.e("Data point was", "invalid");
             return;
         }
+        Log.e("Data point was", "Successful");
 
         // Add the new data series to the array of all data series
         if (logging)
@@ -490,8 +575,11 @@ public class GraphManager implements Runnable
         {
 
             float[] parse;
+
             // Get an array of all the parsed values from the data
             parse = parseData(data);
+
+
 
             // Save the time the data series was initialized at
             this.time = (float) time / 1000;
@@ -533,9 +621,36 @@ public class GraphManager implements Runnable
             // Initialize our array which will hold all the parsed values
             output = new float[5];
 
+            if(runningTest){
+                int max = 0, min = 0;
+                Random r = new Random();
+
+                min = 1;
+                max = 15;
+                output[0] = min + r.nextFloat() * (max - min);
+
+                min = 1;
+                max = 20;
+                output[1] = min + r.nextFloat() * (max - min);
+
+                min = 1;
+                max = 30;
+                output[2] = min + r.nextFloat() * (max - min);
+
+                min = 52;
+                max = 65;
+                output[3] = min + r.nextFloat() * (max - min);
+
+                min = 12;
+                max = 15;
+                output[4] = min + r.nextFloat() * (max - min);
+                return output;
+            }
+
             // Try to parse out the CO2
             try
             {
+                Log.e("<co2>", data.split("<co2>")[1].split("</co2>")[0]);
                 output[0] = stringToFloat(data.split("<co2>")[1].split("</co2>")[0]);
             }
             catch(Exception exception)

@@ -120,7 +120,6 @@ public class graphScreen extends AppCompatActivity {
         // Bluetooth and USB support... we cativate both services and switch between them ... the unused one will just be be idling in background
         mbtHandler = new graphScreen.MyBTHandler(this);
         musbHandler = new graphScreen.MyUSBHandler(this);
-        mdmHandler = new graphScreen.MyDMHandler(this);
 
         // Initialize a new serial reader object, for reading in information from the instrument
         reader = new SerialReader();
@@ -152,6 +151,7 @@ public class graphScreen extends AppCompatActivity {
         button.setText("Connect");
         device_connection=NOT_CONNECTED;
         bt_established=false;
+        manager.runningTest = false;
     }
 
     public void setConnected(int connection){
@@ -166,8 +166,10 @@ public class graphScreen extends AppCompatActivity {
             device_connection=USB;
         }
         if (connection==DATAMOCKER){
-            button.setText("Disconnect DATAMOCKER");
+            button.setText("Disconnect DataMocker");
             device_connection=DATAMOCKER;
+            manager.updateData("I like candy");
+            manager.runningTest = true;
         }
     }
 
@@ -189,28 +191,11 @@ public class graphScreen extends AppCompatActivity {
         builder.setIcon(res.getDrawable(R.drawable.dog));
 
 
-        builder.setNeutralButton("test leash\n(DataMocker)", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton("On a test leash\n(Data Mocker)", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 // Data Mocker Functionality
                 setConnected(DATAMOCKER);
-                //dataMocker DM = new dataMocker();
-                String Data = "<h2oabs><h2o>9.78331</h2o><h2oabs>5.5081963e-2</h2oabs><h2odewpoint>3.24877</h2odewpoint><ivolt>1.7489624e1</ivolt><raw><co2>2702511</co2><co2ref>3189997</co2ref><h2o>1459413</h2o><h2oref>1672431</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.81246e2</co2><co2abs>1.0368597e-1</co2abs><h2o>9.78359</h2o><h2oabs>5.5088639e-2</h2oabs><h2odewpoint>3.24977</h2odewpoint><ivolt>1.7516479e1</ivolt><raw><co2>2702656</co2><co2ref>3189696</co2ref><h2o>1459425</h2o><h2oref>1672430</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91542e1</cellpres><co2>6.81575e2</co2><co2abs>1.0369729e-1</co2abs><h2o>9.78752</h2o><h2oabs>5.5093765e-2</h2oabs><h2odewpoint>3.25243</h2odewpoint><ivolt>1.7529907e1</ivolt><raw><co2>2702597</co2><co2ref>3190179</co2ref><h2o>1459425</h2o><h2oref>1672463</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.82207e2</co2><co2abs>1.0378360e-1</co2abs><h2o>9.78311</h2o><h2oabs>5.5086612e-2</h2oabs><h2odewpoint>3.24906</h2odewpoint><ivolt>1.7563476e1</ivolt><raw><co2>2702537</co2><co2ref>3190170</co2ref><h2o>1459446</h2o><h2oref>1672429</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.81627e2</co2><co2abs>1.0372459e-1</co2abs><h2o>9.77241</h2o><h2oabs>5.5042028e-2</h2oabs><h2odewpoint>3.23359</h2odewpoint><ivolt>1.7603759e1</ivolt><raw><co2>2702666</co2><co2ref>3189843</co2ref><h2o>1459493</h2o><h2oref>1672383</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91880e1</cellpres><co2>6.81105e2</co2><co2abs>1.0369384e-1</co2abs><h2o>9.77653</h2o><h2oabs>5.5070400e-2</h2oabs><h2odewpoint>3.24256</h2odewpoint><ivolt>1.7657470e1</ivolt><raw><co2>2702685</co2><co2ref>3190124</co2ref><h2o>1459445</h2o><h2oref>1672528</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.81431e2</co2><co2abs>1.0370492e-1</co2abs><h2o>9.78832</h2o><h2oabs>5.5108308e-2</h2oabs><h2odewpoint>3.25659</h2odewpoint><ivolt>1.7717895e1</ivolt><raw><co2>2702616</co2><co2ref>3189861</co2ref><h2o>1459403</h2o><h2oref>1672414</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.80905e2</co2><co2abs>1.0365164e-1</co2abs><h2o>9.80000</h2o><h2oabs>5.5156946e-2</h2oabs><h2odewpoint>3.27346</h2odewpoint><ivolt>1.7744750e1</ivolt><raw><co2>2702808</co2><co2ref>3189888</co2ref><h2o>1459366</h2o><h2oref>1672610</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.81167e2</co2><co2abs>1.0367822e-1</co2abs><h2o>9.79837</h2o><h2oabs>5.5150151e-2</h2oabs><h2odewpoint>3.27110</h2odewpoint><ivolt>1.7764892e1</ivolt><raw><co2>2702521</co2><co2ref>3189938</co2ref><h2o>1459466</h2o><h2oref>1672462</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.12787e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.81673e2</co2><co2abs>1.0372924e-1</co2abs><h2o>9.77724</h2o><h2oabs>5.5062174e-2</h2oabs><h2odewpoint>3.24058</h2odewpoint><ivolt>1.7758178e1</ivolt><raw><co2>2702491</co2><co2ref>3189881</co2ref><h2o>1459466</h2o><h2oref>1672413</h2oref></raw></data></li840>\n" +
-                        "<li840><data><celltemp>5.13051e1</celltemp><cellpres>7.91711e1</cellpres><co2>6.82530e2</co2><co2abs>1.0381090e-1</co2abs><h2o>9.79289</h2o><h2oabs>5.5124044e-2</h2oabs><h2odewpoint>3.26320</h2odewpoint><ivolt>1.7751464e1</ivolt><raw><co2>2702601</co2><co2ref>3190611</co2ref><h2o>1459301</h2o><h2oref>1672492</h2oref></raw></data></li840>";
-                manager.updateData(Data);
-                //mdmHandler.obtainMessage();
-
-
-
             }
         });
 
@@ -267,8 +252,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -283,8 +268,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -298,8 +283,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -313,8 +298,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -510,41 +495,41 @@ public class graphScreen extends AppCompatActivity {
      */
     public void finalize(View view)
     {
-    if (!loggingstopped ) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Log duration");
-        alert.setMessage("Intended log duration (in seconds):");
+        if (!loggingstopped ) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Log duration");
+            alert.setMessage("Intended log duration (in seconds):");
 
-        // Set an EditText view to get user input
-        final EditText seconds = new EditText(this);
-        seconds.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-        seconds.setMaxLines(1);
-        seconds.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        alert.setView(seconds);
+            // Set an EditText view to get user input
+            final EditText seconds = new EditText(this);
+            seconds.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+            seconds.setMaxLines(1);
+            seconds.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            alert.setView(seconds);
 
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String value = seconds.getText().toString();
-                if (!value.equals("")) {
-                    logduration = Integer.parseInt(value) * 1000;
-                }
-                countdown_label = String.format("Log duration\n%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
-                textIds[7].setText(countdown_label);
-                return;
-            }
-        });
-
-        alert.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        return;
+            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String value = seconds.getText().toString();
+                    if (!value.equals("")) {
+                        logduration = Integer.parseInt(value) * 1000;
                     }
-                });
-        alert.show();
+                    countdown_label = String.format("Log duration\n%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
+                    textIds[7].setText(countdown_label);
+                    return;
+                }
+            });
 
-     return;
-    }
+            alert.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // TODO Auto-generated method stub
+                            return;
+                        }
+                    });
+            alert.show();
+
+            return;
+        }
         loggingstopped=false;
 
         String reading;
@@ -624,10 +609,10 @@ public class graphScreen extends AppCompatActivity {
 
         // Construct the CSV file content
         metaString = "Instrument,Operator Name,Site Name,Sample ID,Temperature,Comments,Time and Date,Longitude," +
-                     "Latitude,Elevation,R Squared,Regression Slope,Standard Error,X Start Range,X End Range,AppVersion\n" +
-                     metaInstrument + "," +metaOpName + "," + metaSite + "," + metaSampleId + "," + metaTemp + "," +
-                     metaComments + "," + metaTime + "," + metaLong + "," + metaLat + "," +
-                     metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," +
+                "Latitude,Elevation,R Squared,Regression Slope,Standard Error,X Start Range,X End Range,AppVersion\n" +
+                metaInstrument + "," +metaOpName + "," + metaSite + "," + metaSampleId + "," + metaTemp + "," +
+                metaComments + "," + metaTime + "," + metaLong + "," + metaLat + "," +
+                metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," +
                 df.format(firstSecond) + "," + df.format(lastSecond) + "," + getString(R.string.version_name);
 
 
@@ -699,7 +684,7 @@ public class graphScreen extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
                         break;
                 }
-                    // ADD BT_BROADCASTS HERE
+                // ADD BT_BROADCASTS HERE
             }
             else if (device_connection == USB)  {
                 switch (intent.getAction()) {
@@ -734,19 +719,17 @@ public class graphScreen extends AppCompatActivity {
 
     private BTService btService;
     private UsbService usbService;
-    private dataMocker dmService;
 
-  //  private graphScreen.MyHandler mHandler;
-  private graphScreen.MyBTHandler mbtHandler;
-  private graphScreen.MyUSBHandler musbHandler;
-  private graphScreen.MyDMHandler mdmHandler;
+    //  private graphScreen.MyHandler mHandler;
+    private graphScreen.MyBTHandler mbtHandler;
+    private graphScreen.MyUSBHandler musbHandler;
 
 
     private final ServiceConnection btConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-                btService = ((BTService.BTBinder) arg1).getService();
-                btService.setHandler(mbtHandler);
+            btService = ((BTService.BTBinder) arg1).getService();
+            btService.setHandler(mbtHandler);
         }
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
@@ -758,23 +741,13 @@ public class graphScreen extends AppCompatActivity {
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-                usbService = ((UsbService.UsbBinder) arg1).getService();
-                usbService.setHandler(musbHandler);
+            usbService = ((UsbService.UsbBinder) arg1).getService();
+            usbService.setHandler(musbHandler);
         }
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
             usbService = null;
         }
-    };
-
-    private final ServiceConnection dmConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName arg0, IBinder arg1){
-            dmService = ((dataMocker.DMBinder) arg1).getService();
-            dmService.setHandler(mdmHandler);
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName arg0){ dmService = null;}
     };
 
     @Override
@@ -814,16 +787,16 @@ public class graphScreen extends AppCompatActivity {
 
     private void startUSBService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
         if (!UsbService.SERVICE_CONNECTED ) {
-                Intent startService = new Intent(this, service);
-                if (extras != null && !extras.isEmpty()) {
-                    Set<String> keys = extras.keySet();
-                    for (String key : keys) {
-                        String extra = extras.getString(key);
-                        startService.putExtra(key, extra);
-                    }
+            Intent startService = new Intent(this, service);
+            if (extras != null && !extras.isEmpty()) {
+                Set<String> keys = extras.keySet();
+                for (String key : keys) {
+                    String extra = extras.getString(key);
+                    startService.putExtra(key, extra);
                 }
-                startService(startService);
             }
+            startService(startService);
+        }
         Intent bindingIntent = new Intent(this, service);
         bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -884,17 +857,6 @@ public class graphScreen extends AppCompatActivity {
                         Toast.makeText(mActivity.get(), "DSR_CHANGE", Toast.LENGTH_LONG).show();
                         break;
                 }
-            }
-        }
-    }
-
-    private static class MyDMHandler extends Handler {
-        private final WeakReference<graphScreen> mActivity;
-        public MyDMHandler(graphScreen activity){ mActivity = new WeakReference<>(activity);}
-        @Override
-        public void handleMessage(Message msg){
-            if(device_connection == DATAMOCKER){
-                String data = "";
             }
         }
     }
