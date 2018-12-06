@@ -127,12 +127,6 @@ public class GraphManager implements Runnable
 
         // GET INSTRUMENT
         data = this.getData();
-        if(data == null){
-            Log.e("Data was ", "null");
-        }else{
-            Log.e("Data is me, bitch: ", this.getData());
-        }
-
 
 
 
