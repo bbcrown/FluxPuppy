@@ -72,13 +72,13 @@ public class GraphManager implements Runnable
         dataArray = new ArrayList<DataSeries>();
 
         // Initialize all of the graphs
-        co2Graph = new LineGraph(graphIds[0], "CO2", "Time", "CO2 (ppm)",
+        co2Graph = new LineGraph(graphIds[0], "CO2", "Time (seconds)", "CO2 (ppm)",
                 Color.argb(255, 0, 0, 0));
-        h2oGraph = new LineGraph(graphIds[1], "H2O", "Time", "H2O (ppt)",
+        h2oGraph = new LineGraph(graphIds[1], "H2O", "Time (seconds)", "H2O (ppt)",
                 Color.argb(255, 0, 0, 255));
-        tempGraph = new LineGraph(graphIds[2], "Temperature", "Time", "Temperature (°C)",
+        tempGraph = new LineGraph(graphIds[2], "Temperature", "Time (seconds)", "Temperature (°C)",
                 Color.argb(255, 255, 0, 0));
-        presGraph = new LineGraph(graphIds[3], "Pressure", "Time", "Pressure (kPa)",
+        presGraph = new LineGraph(graphIds[3], "Pressure", "Time (seconds)", "Pressure (kPa)",
                 Color.argb(255, 0, 125, 0));
 
         // Get the IDs for the text views used to display the data values

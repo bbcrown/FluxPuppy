@@ -227,12 +227,12 @@ public class viewScreen extends AppCompatActivity {
         operator.setText("Operator Name : " + metaDataArray[1]);
         site.setText("Site  Name : " + metaDataArray[2]);
         sampleID.setText("Sample ID : " + metaDataArray[3]);
-        temperature.setText("Temperature : " + metaDataArray[4]);
+        temperature.setText("Temperature (°C): " + metaDataArray[4]);
         comments.setText(metaDataArray[5]);
         timeAndDate.setText("Time and Date : " + metaDataArray[6]);
-        longitude.setText("Longitude : " + metaDataArray[7]);
-        latitude.setText("Latitude : " + metaDataArray[8]);
-        elevation.setText("Elevation : " + metaDataArray[9]);
+        longitude.setText("Longitude (deg): " + metaDataArray[7]);
+        latitude.setText("Latitude (deg): " + metaDataArray[8]);
+        elevation.setText("Elevation (m): " + metaDataArray[9]);
 
         // set original comments for checking if they changed later
         origionalComments = comments.getText().toString();
@@ -270,13 +270,13 @@ public class viewScreen extends AppCompatActivity {
         yIntercept = getYIntercept(graphArray[0]);
 
         // Set up graphs with data
-        co2Graph = new LineGraph(graphIds[0], "CO2", "Time", "CO2",
+        co2Graph = new LineGraph(graphIds[0], "CO2", "Time (seconds)", "CO2 (ppm)",
                 Color.argb(255, 0, 0, 0), graphArray[0]);
-        h2oGraph = new LineGraph(graphIds[1], "H2O", "Time", "H2O",
+        h2oGraph = new LineGraph(graphIds[1], "H2O", "Time (seconds)", "H2O (ppt)",
                 Color.argb(255, 0, 0, 255), graphArray[1]);
-        tempGraph = new LineGraph(graphIds[2], "Temperature", "Time", "Temperature",
+        tempGraph = new LineGraph(graphIds[2], "Temperature", "Time (seconds)", "Temperature (°C)",
                 Color.argb(255, 255, 0, 0), graphArray[2]);
-        presGraph = new LineGraph(graphIds[3], "Pressure", "Time", "Pressure",
+        presGraph = new LineGraph(graphIds[3], "Pressure", "Time (seconds)", "Pressure (kPa)",
                 Color.argb(255, 0, 125, 0), graphArray[3]);
 
         //add a regression line to the co2 graph
@@ -929,13 +929,13 @@ public class viewScreen extends AppCompatActivity {
             yIntercept = getYIntercept(graphArray[0]);
 
             // Set up graphs with data
-            co2Graph = new LineGraph(graphIds[0], "CO2", "Time", "CO2",
+            co2Graph = new LineGraph(graphIds[0], "CO2", "Time (seconds)", "CO2 (ppm)",
                     Color.argb(255, 0, 0, 0), graphArray[0]);
-            h2oGraph = new LineGraph(graphIds[1], "H2O", "Time", "H2O",
+            h2oGraph = new LineGraph(graphIds[1], "H2O", "Time (seconds)", "H2O (ppt)",
                     Color.argb(255, 0, 0, 255), graphArray[1]);
-            tempGraph = new LineGraph(graphIds[2], "Temperature", "Time", "Temperature",
+            tempGraph = new LineGraph(graphIds[2], "Temperature", "Time (seconds)", "Temperature (°C)",
                     Color.argb(255, 255, 0, 0), graphArray[2]);
-            presGraph = new LineGraph(graphIds[3], "Pressure", "Time", "Pressure",
+            presGraph = new LineGraph(graphIds[3], "Pressure", "Time (seconds)", "Pressure (kPa)",
                     Color.argb(255, 0, 125, 0), graphArray[3]);
 
             //add a regression line to the co2 graph

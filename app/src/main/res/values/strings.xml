@@ -19,7 +19,7 @@
     <string name="tap_to_enter_latitude">Tap to enter latitude</string>
     <string name="retry_gps">Retry GPS</string>
     <string name="degrees_in_celsius">Degrees in celsius</string>
-    <string name="temperature">Temperature:</string>
+    <string name="temperature">Temperature (°C):</string>
     <string name="sample_id">Sample ID:</string>
     <string name="additional_comments">Additional comments</string>
     <string name="load">Loading ...</string>
