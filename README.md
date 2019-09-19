@@ -44,3 +44,7 @@ All datasets are visible in a list in the File Directory screen. The newest data
 
 #### 7. Troubleshooting:
 Bluetooth connection not working: it is necessary to configure the communication settings of the Bluetooth adapter with a computer to match those of the IRGA (the RS-232 port is configured as Data Terminal Equipment (DTE) with no hardware handshaking): BaudRate: 9600bps, DataBits: 8, Parity:None, StopBits:1, FlowControl: None; See LI-820/840 manual).
+
+#### 8. Bluetooth Mode and Baud Rate:
+When using the Bluetooth adaptor, note that the default baud rate of the adaptor might be different than the baud rate of the LI-COR device. In that case, you need to configure the BT device as described in its manual. You can find more information from [here](http://www.licor.com/env/newsline/2016/02/troubleshooting-rs-232-connectivity-issues-for-li-cor-analyzers/) and the figure below.
+![Baud Rate](baudrate.png)
