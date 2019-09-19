@@ -47,4 +47,5 @@ Bluetooth connection not working: it is necessary to configure the communication
 
 #### 8. Bluetooth Mode and Baud Rate:
 When using the Bluetooth adaptor, note that the default baud rate of the adaptor might be different than the baud rate of the LI-COR device. In that case, you need to configure the BT device as described in its manual. You can find more information from [here](http://www.licor.com/env/newsline/2016/02/troubleshooting-rs-232-connectivity-issues-for-li-cor-analyzers/) and the figure below.
+
 ![Baud Rate](baudrate.png)
