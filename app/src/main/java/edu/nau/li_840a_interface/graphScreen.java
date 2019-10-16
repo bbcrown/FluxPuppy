@@ -47,6 +47,7 @@ public class graphScreen extends AppCompatActivity {
     public static int NOT_CONNECTED = 0;  // Where?
     public static int USB = 1;  // Where?
     public static int BLUETOOTH = 2;  // Where?
+    public static int DATAMOCKER = 3;
     // CONNECTION STATUS
     public static int device_connection=NOT_CONNECTED; // Is a Sensor connected?
     public static boolean bt_established=false;
@@ -150,6 +151,7 @@ public class graphScreen extends AppCompatActivity {
         button.setText("Connect");
         device_connection=NOT_CONNECTED;
         bt_established=false;
+        manager.runningTest = false;
     }
 
     public void setConnected(int connection){
@@ -162,6 +164,12 @@ public class graphScreen extends AppCompatActivity {
         if (connection==USB){
             button.setText("Disconnect USB");
             device_connection=USB;
+        }
+        if (connection==DATAMOCKER){
+            button.setText("Disconnect DataMocker");
+            device_connection=DATAMOCKER;
+            manager.updateData("I like candy");
+            manager.runningTest = true;
         }
     }
 
@@ -181,6 +189,15 @@ public class graphScreen extends AppCompatActivity {
         // Set the icon of the alert box
         Resources res = getResources();
         builder.setIcon(res.getDrawable(R.drawable.dog));
+
+
+        builder.setNeutralButton("On a test leash\n(Data Mocker)", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Data Mocker Functionality
+                setConnected(DATAMOCKER);
+            }
+        });
 
         // If the yes button is pressed
         builder.setPositiveButton("On a leash\n(USB)", new DialogInterface.OnClickListener() {
@@ -235,8 +252,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -251,8 +268,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -266,8 +283,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -281,8 +298,8 @@ public class graphScreen extends AppCompatActivity {
     {
 
         graphIds[3].setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT));
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
         graphIds[0].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[1].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         graphIds[2].setLayoutParams(new LinearLayout.LayoutParams(0, 0));
@@ -478,41 +495,41 @@ public class graphScreen extends AppCompatActivity {
      */
     public void finalize(View view)
     {
-    if (!loggingstopped ) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Log duration");
-        alert.setMessage("Intended log duration (in seconds):");
+        if (!loggingstopped ) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Log duration");
+            alert.setMessage("Intended log duration (in seconds):");
 
-        // Set an EditText view to get user input
-        final EditText seconds = new EditText(this);
-        seconds.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-        seconds.setMaxLines(1);
-        seconds.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        alert.setView(seconds);
+            // Set an EditText view to get user input
+            final EditText seconds = new EditText(this);
+            seconds.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+            seconds.setMaxLines(1);
+            seconds.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            alert.setView(seconds);
 
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String value = seconds.getText().toString();
-                if (!value.equals("")) {
-                    logduration = Integer.parseInt(value) * 1000;
-                }
-                countdown_label = String.format("Log duration\n%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
-                textIds[7].setText(countdown_label);
-                return;
-            }
-        });
-
-        alert.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        return;
+            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String value = seconds.getText().toString();
+                    if (!value.equals("")) {
+                        logduration = Integer.parseInt(value) * 1000;
                     }
-                });
-        alert.show();
+                    countdown_label = String.format("Log duration\n%d:%02d", logduration / (60 * 1000) % 60, logduration / 1000 % 60);
+                    textIds[7].setText(countdown_label);
+                    return;
+                }
+            });
 
-     return;
-    }
+            alert.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // TODO Auto-generated method stub
+                            return;
+                        }
+                    });
+            alert.show();
+
+            return;
+        }
         loggingstopped=false;
 
         String reading;
@@ -592,10 +609,10 @@ public class graphScreen extends AppCompatActivity {
 
         // Construct the CSV file content
         metaString = "Instrument,Operator Name,Site Name,Sample ID,Temperature,Comments,Time and Date,Longitude," +
-                     "Latitude,Elevation,R Squared,Regression Slope,Standard Error,X Start Range,X End Range,AppVersion\n" +
-                     metaInstrument + "," +metaOpName + "," + metaSite + "," + metaSampleId + "," + metaTemp + "," +
-                     metaComments + "," + metaTime + "," + metaLong + "," + metaLat + "," +
-                     metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," +
+                "Latitude,Elevation,R Squared,Regression Slope,Standard Error,X Start Range,X End Range,AppVersion\n" +
+                metaInstrument + "," +metaOpName + "," + metaSite + "," + metaSampleId + "," + metaTemp + "," +
+                metaComments + "," + metaTime + "," + metaLong + "," + metaLat + "," +
+                metaElevation + "," + rSquared + "," + regSlope + "," + stdError + "," +
                 df.format(firstSecond) + "," + df.format(lastSecond) + "," + getString(R.string.version_name);
 
 
@@ -667,7 +684,7 @@ public class graphScreen extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "Device does not support Bluetooth", Toast.LENGTH_SHORT).show();
                         break;
                 }
-                    // ADD BT_BROADCASTS HERE
+                // ADD BT_BROADCASTS HERE
             }
             else if (device_connection == USB)  {
                 switch (intent.getAction()) {
@@ -703,16 +720,16 @@ public class graphScreen extends AppCompatActivity {
     private BTService btService;
     private UsbService usbService;
 
-  //  private graphScreen.MyHandler mHandler;
-  private graphScreen.MyBTHandler mbtHandler;
-  private graphScreen.MyUSBHandler musbHandler;
+    //  private graphScreen.MyHandler mHandler;
+    private graphScreen.MyBTHandler mbtHandler;
+    private graphScreen.MyUSBHandler musbHandler;
 
 
     private final ServiceConnection btConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-                btService = ((BTService.BTBinder) arg1).getService();
-                btService.setHandler(mbtHandler);
+            btService = ((BTService.BTBinder) arg1).getService();
+            btService.setHandler(mbtHandler);
         }
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
@@ -724,8 +741,8 @@ public class graphScreen extends AppCompatActivity {
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-                usbService = ((UsbService.UsbBinder) arg1).getService();
-                usbService.setHandler(musbHandler);
+            usbService = ((UsbService.UsbBinder) arg1).getService();
+            usbService.setHandler(musbHandler);
         }
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
@@ -770,16 +787,16 @@ public class graphScreen extends AppCompatActivity {
 
     private void startUSBService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
         if (!UsbService.SERVICE_CONNECTED ) {
-                Intent startService = new Intent(this, service);
-                if (extras != null && !extras.isEmpty()) {
-                    Set<String> keys = extras.keySet();
-                    for (String key : keys) {
-                        String extra = extras.getString(key);
-                        startService.putExtra(key, extra);
-                    }
+            Intent startService = new Intent(this, service);
+            if (extras != null && !extras.isEmpty()) {
+                Set<String> keys = extras.keySet();
+                for (String key : keys) {
+                    String extra = extras.getString(key);
+                    startService.putExtra(key, extra);
                 }
-                startService(startService);
             }
+            startService(startService);
+        }
         Intent bindingIntent = new Intent(this, service);
         bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }

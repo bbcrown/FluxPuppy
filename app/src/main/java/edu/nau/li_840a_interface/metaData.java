@@ -380,27 +380,23 @@ public class metaData extends AppCompatActivity {
         int photoH = bmOptions.outHeight;
         // Handling Error so it only accepts Portrait Images
         // If statement accepts Portrait Images Images
-        if (photoW < photoH) {
+        // Determine how much to scale down the image
 
-            // Determine how much to scale down the image
+        int scaleFactor = Math.max(photoW / targetW, photoH / targetH);
 
-            int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
 
-            // Decode the image file into a Bitmap sized to fill the View
-            bmOptions.inJustDecodeBounds = false;
-            bmOptions.inSampleSize = scaleFactor;
-            bmOptions.inPurgeable = true;
-
-            image = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-            //Toast.makeText(metaData.this, "Unscaled: " + image.getByteCount(), Toast.LENGTH_SHORT).show();
-            //scaleImage();
-            //Toast.makeText(metaData.this, "Scaled: " + image.getByteCount(), Toast.LENGTH_SHORT).show();
-            imagePreview.setImageBitmap(image);
+        image = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+        //Toast.makeText(metaData.this, "Unscaled: " + image.getByteCount(), Toast.LENGTH_SHORT).show();
+        //scaleImage();
+        //Toast.makeText(metaData.this, "Scaled: " + image.getByteCount(), Toast.LENGTH_SHORT).show();
+        imagePreview.setImageBitmap(image);
 
 
-        } else {
-            Toast.makeText(metaData.this, "Please change the orientation and take a new photo!", Toast.LENGTH_LONG).show();
-        }
+
 
 
     }
